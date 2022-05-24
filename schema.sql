@@ -1,44 +1,51 @@
 DROP DATABASE IF EXISTS workout_planner;
-CREATE DATABASE workout_planner; 
+CREATE DATABASE workout_planner;
 
 \c workout_planner
 
 DROP TABLE IF EXISTS users;
-DROP TABLE IF EXISTS workout;
-DROP TABLE IF EXISTS exercise;
+DROP TABLE IF EXISTS workouts;
 DROP TABLE IF EXISTS daysofweek;
+DROP TABLE IF EXISTS equipment;
+DROP TABLE IF EXISTS exercises;
 DROP TABLE IF EXISTS workout_plan;
 
 CREATE TABLE users (
-    username text PRIMARY KEY,
-    password text NOT NULL,
-    email text NOT NULL,
-    first_name text NOT NULL,
-    last_name text NOT NULL,
-    image_url text
+    id SERIAL PRIMARY KEY,
+    first_name TEXT NOT NULL,
+    last_name TEXT NOT NULL,
+    email TEXT UNIQUE NOT NULL,
+    username TEXT UNIQUE NOT NULL,
+    password TEXT NOT NULL
 );
 
-CREATE TABLE workout (
-    id integer PRIMARY KEY,
-    username text NOT NULL REFERENCES users,
-    title text,
-    description text
-);
-
-CREATE TABLE exercise (
-    id integer PRIMARY KEY,
-    name text,
-    description text, 
-    equipment integer
+CREATE TABLE workouts (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users,
+    title TEXT,
+    description TEXT 
 );
 
 CREATE TABLE daysofweek (
-    days_of_week text PRIMARY KEY
+    days_of_week TEXT PRIMARY KEY
+);
+
+CREATE TABLE equipment (
+    id SERIAL PRIMARY KEY,
+    name TEXT UNIQUE
+);
+
+CREATE TABLE exercises (
+    id SERIAL PRIMARY KEY,
+    name TEXT UNIQUE,
+    description TEXT, 
+    equipment_name TEXT REFERENCES equipment
 );
 
 CREATE TABLE workout_plan (
-    id integer PRIMARY KEY,
-    workout_id integer NOT NULL REFERENCES workout,
-    day_of_week text NOT NULL REFERENCES daysofweek,
-    exercise_id integer NOT NULL REFERENCES exercise
+    id SERIAL PRIMARY KEY,
+    workout_id INTEGER REFERENCES workouts,
+    day_of_week TEXT REFERENCES daysofweek,
+    equipment_name TEXT REFERENCES equipment,
+    exercise_name TEXT REFERENCES exercises
 );
