@@ -31,13 +31,13 @@ CREATE TABLE daysofweek (
 );
 
 CREATE TABLE equipment (
-    id SERIAL PRIMARY KEY,
-    name TEXT UNIQUE
+    id INTEGER,
+    name TEXT UNIQUE PRIMARY KEY
 );
 
 CREATE TABLE exercises (
-    id SERIAL PRIMARY KEY,
-    name TEXT UNIQUE,
+    id INTEGER,
+    name TEXT UNIQUE PRIMARY KEY,
     description TEXT, 
     equipment_name TEXT REFERENCES equipment
 );

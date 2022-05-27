@@ -151,19 +151,19 @@ class DaysOfWeek(db.Model):
             "day": self.days_of_week
         }
 
-class Equiment(db.Model):
+class Equipment(db.Model):
     """Equipment Model"""
     
     __tablename__ = "equipment"
 
     id = db.Column(
-        db.Integer,
-        primary_key = True
+        db.Integer
     )
 
     name = db.Column(
         db.Text,
-        unique = True
+        unique = True,
+        primary_key = True
     )
 
     def __repr__(self):
@@ -181,13 +181,13 @@ class Exercise(db.Model):
     __tablename__ = "exercises"
 
     id = db.Column(
-        db.Integer,
-        primary_key = True
+        db.Integer
     )
 
     name = db.Column(
         db.Text,
-        unique = True
+        unique = True,
+        primary_key = True
     )
 
     description = db.Column(
@@ -200,8 +200,8 @@ class Exercise(db.Model):
     )
 
     equipment = db.relationship(
-        "Equipment", 
-        backref="exercises"
+        "Equipment",
+        backref="exercise"
     )
 
     def __repr__(self):
