@@ -1,6 +1,7 @@
 from email.policy import default
 from enum import unique
 from math import sqrt
+from turtle import back
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from sqlalchemy import ForeignKey, Unicode, null
@@ -118,44 +119,6 @@ def days_query():
         return DaysOfWeek.query
 
     
-
-class Exercise(db.Model):
-    """Exercise Model"""
-
-    __tablename__ = "exercises"
-
-    id = db.Column(
-        db.Integer,
-        primary_key=True
-    )
-
-    name = db.Column(
-        db.Text
-    )
-
-    description = db.Column(
-        db.Text
-    )
-
-    equipment_id = db.Column(
-        db.Integer
-    )
-
-
-    def __repr__(self):
-        return f"<Excercise {self.id} >"
-    
-    def serialize(self):
-        return{
-            "id": self.id,
-            "name": self.name,
-            "description": self.description,
-            "equipment_id": self.equipment_id
-        }
-
-def excer_query():
-        return Exercise.query
-
 class Equipment(db.Model):
     """Equipment Model"""
     
@@ -178,6 +141,50 @@ class Equipment(db.Model):
             "id": self.id,
             "name": self.name
         }
+
+class Exercise(db.Model):
+    """Exercise Model"""
+
+    __tablename__ = "exercises"
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
+
+    name = db.Column(
+        db.Text
+    )
+
+    description = db.Column(
+        db.Text
+    )
+
+    equipment_id = db.Column(
+        db.Integer,
+        db.ForeignKey("equipment.id")
+    )
+
+    equip_id = db.relationship(
+        "Equipment",
+        backref="exercises"
+    )
+
+
+    def __repr__(self):
+        return f"<Excercise {self.id} >"
+    
+    def serialize(self):
+        return{
+            "id": self.id,
+            "name": self.name,
+            "description": self.description,
+            "equipment_id": self.equipment_id
+        }
+
+def excer_query():
+        return Exercise.query
+
 
 class Workout(db.Model):
     """Workout Model"""

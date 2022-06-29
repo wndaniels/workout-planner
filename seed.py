@@ -31,7 +31,7 @@ db.session.commit()
 # Pull Excercise data from API
 #####
 newExercData = []
-exerc_data = requests.get("https://wger.de/api/v2/exercise/?format=json&language=2").json()
+exerc_data = requests.get("https://wger.de/api/v2/exercise/?format=json&limit=231&language=2").json()
 
 for exerc in exerc_data["results"]:
     equip_id = exerc["equipment"]

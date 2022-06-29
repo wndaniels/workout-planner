@@ -24,16 +24,16 @@ CREATE TABLE daysofweek (
     days_of_week TEXT UNIQUE
 );
 
+CREATE TABLE equipment (
+    id INTEGER PRIMARY KEY,
+    name TEXT UNIQUE
+);
+
 CREATE TABLE exercises (
     id INTEGER PRIMARY KEY,
     name TEXT,
     description TEXT, 
-    equipment_id INTEGER
-);
-
-CREATE TABLE equipment (
-    id INTEGER PRIMARY KEY,
-    name TEXT UNIQUE
+    equipment_id INTEGER REFERENCES equipment
 );
 
 CREATE TABLE workouts (
