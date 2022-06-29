@@ -1,8 +1,10 @@
+from email.policy import default
 from enum import unique
 from math import sqrt
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
-from sqlalchemy import ForeignKey, null
+from sqlalchemy import ForeignKey, Unicode, null
+from sqlalchemy.dialects import postgresql
 from sqlalchemy.orm import backref
 
 db = SQLAlchemy()
@@ -92,6 +94,98 @@ class User(db.Model):
             "username": self.username
         }
 
+
+
+class DaysOfWeek(db.Model):
+    """DaysOfWeek Model"""
+
+    __tablename__ = "daysofweek"
+
+    days_of_week = db.Column(
+        db.Text,
+        primary_key = True
+    )
+
+    def __repr__(self):
+        return f"<DaysOfWeek {self.days_of_week}>"
+    
+    def serialize(self):
+        return {
+            "day": self.days_of_week
+        }
+    
+def days_query():
+        return DaysOfWeek.query
+
+    
+
+class Exercise(db.Model):
+    """Exercise Model"""
+
+    __tablename__ = "exercises"
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
+
+    name = db.Column(
+        db.Text
+    )
+
+    description = db.Column(
+        db.Text
+    )
+
+    equipment_id = db.Column(
+        db.Integer,
+        unique=True
+    )
+
+
+    def __repr__(self):
+        return f"<Excercise {self.id} >"
+    
+    def serialize(self):
+        return{
+            "id": self.id,
+            "name": self.name,
+            "description": self.description,
+            "equipment_id": self.equipment_id
+        }
+
+def excer_query():
+        return Exercise.query
+
+class Equipment(db.Model):
+    """Equipment Model"""
+    
+    __tablename__ = "equipment"
+
+    id = db.Column(
+        db.Integer,
+        db.ForeignKey("exercises.equipment_id"),
+        primary_key = True
+    )
+
+    name = db.Column(
+        db.Text
+    )
+
+    equipment_id = db.relationship(
+        "Exercise",
+        backref="equipment"
+    )
+
+    def __repr__(self):
+        return f"<Equipment {self.id}>"
+    
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name": self.name
+        }
+
 class Workout(db.Model):
     """Workout Model"""
 
@@ -117,8 +211,38 @@ class Workout(db.Model):
         db.Text
     )
 
+    day_of_week = db.Column(
+        db.Text,
+        db.ForeignKey("daysofweek.days_of_week")
+    )
+
+    equipment_id = db.Column(
+        db.Integer,
+        db.ForeignKey("equipment.id")
+    )
+
+    exercise_id = db.Column(
+        db.Integer,
+        db.ForeignKey("exercises.id")
+    )
+
     user = db.relationship(
         "User",
+        backref="workouts"
+    )
+
+    days = db.relationship(
+        "DaysOfWeek",
+        backref="workouts"
+    )
+
+    equipment = db.relationship(
+        "Equipment", 
+        backref="workouts"
+    )
+
+    exercise = db.relationship(
+        "Exercise",
         backref="workouts"
     )
 
@@ -130,140 +254,9 @@ class Workout(db.Model):
             "id": self.id,
             "user_id": self.user_id,
             "title": self.title,
-            "description": self.description
-        }
-
-class DaysOfWeek(db.Model):
-    """DaysOfWeek Model"""
-
-    __tablename__ = "daysofweek"
-
-    days_of_week = db.Column(
-        db.Text,
-        primary_key = True
-    )
-
-    def __repr__(self):
-        return f"<DaysOfWeek {self.days_of_week}>"
-    
-    def serialize(self):
-        return {
-            "day": self.days_of_week
-        }
-
-class Equipment(db.Model):
-    """Equipment Model"""
-    
-    __tablename__ = "equipment"
-
-    id = db.Column(
-        db.Integer
-    )
-
-    name = db.Column(
-        db.Text,
-        unique = True,
-        primary_key = True
-    )
-
-    def __repr__(self):
-        return f"<Equipment {self.id}>"
-    
-    def serialize(self):
-        return {
-            "id": self.id,
-            "name": self.name
-        }
-
-class Exercise(db.Model):
-    """Exercise Model"""
-
-    __tablename__ = "exercises"
-
-    id = db.Column(
-        db.Integer
-    )
-
-    name = db.Column(
-        db.Text,
-        unique = True,
-        primary_key = True
-    )
-
-    description = db.Column(
-        db.Text
-    )
-
-    equipment_name = db.Column(
-        db.Text,
-        db.ForeignKey("equipment.name")
-    )
-
-    equipment = db.relationship(
-        "Equipment",
-        backref="exercise"
-    )
-
-    def __repr__(self):
-        return f"<Excercise excercise:{self.name} equipment:{self.equipment_name}>"
-    
-    def serialize(self):
-        return{
-            "id": self.id,
-            "name": self.name,
             "description": self.description,
-            "equipment_name": self.equipment_name
-        }
-
-class WorkoutPlan(db.Model):
-    """WorkoutPlan Model"""
-
-    __tablename__ = "workout_plan"
-
-    id = db.Column(
-        db.Integer,
-        primary_key = True,
-        autoincrement = True
-    )
-
-    workouts_id = db.Column(
-        db.Integer,
-        db.ForeignKey("workouts.id")
-    )
-
-    day_of_week = db.Column(
-        db.Text,
-        db.ForeignKey("daysofweek.days_of_week")
-    )
-
-    equipment_name = db.Column(
-        db.Text,
-        db.ForeignKey("equipment.name")
-    )
-
-    exercise_name = db.Column(
-        db.Text,
-        db.ForeignKey("exercises.name")
-    )
-
-    equipment = db.relationship(
-        "Equipment", 
-        backref="workout_plan"
-    )
-
-    excercise = db.relationship(
-        "Exercise",
-        backref="workout_plan"
-    )
-
-    def __repr__(self):
-        return f"<WorkoutPlan days:{self.day_of_week} exercise:{self.exercise_name} equipment:{self.equipment_name}>"
-    
-    def serialize(self):
-        return {
-            "id": self.id,
-            "workouts_id": self.workouts_id,
             "day_of_week": self.day_of_week,
-            "equipment": self.equipment_name,
-            "exercise": self.exercise_name
+            "equipment_id": self.equipment_id,
+            "exercise_id": self.exercise_id
         }
+

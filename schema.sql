@@ -19,33 +19,30 @@ CREATE TABLE users (
     password TEXT NOT NULL
 );
 
+CREATE TABLE daysofweek (
+    id INTEGER PRIMARY KEY,
+    days_of_week TEXT UNIQUE
+);
+
+CREATE TABLE equipment (
+    id INTEGER PRIMARY KEY,
+    name TEXT UNIQUE
+);
+
+CREATE TABLE exercises (
+    id INTEGER PRIMARY KEY,
+    name TEXT,
+    description TEXT, 
+    equipment_id INTEGER REFERENCES equipment
+);
+
 CREATE TABLE workouts (
     id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL REFERENCES users,
     title TEXT,
-    description TEXT 
+    description TEXT,
+    day_of_week INTEGER REFERENCES daysofweek,
+    equipment_id INTEGER REFERENCES equipment,
+    exercise_id INTEGER REFERENCES exercises
 );
 
-CREATE TABLE daysofweek (
-    days_of_week TEXT PRIMARY KEY
-);
-
-CREATE TABLE equipment (
-    id INTEGER,
-    name TEXT UNIQUE PRIMARY KEY
-);
-
-CREATE TABLE exercises (
-    id INTEGER,
-    name TEXT UNIQUE PRIMARY KEY,
-    description TEXT, 
-    equipment_name TEXT REFERENCES equipment
-);
-
-CREATE TABLE workout_plan (
-    id SERIAL PRIMARY KEY,
-    workout_id INTEGER REFERENCES workouts,
-    day_of_week TEXT REFERENCES daysofweek,
-    equipment_name TEXT REFERENCES equipment,
-    exercise_name TEXT REFERENCES exercises
-);

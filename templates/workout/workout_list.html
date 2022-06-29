@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% for workout in workouts %}
+{% block title %}
+Workout: {{workout.title}}
+{% endblock %}
+{% endfor %}
+
+{% for workout in workouts %}
+{% block content %}
+<h1>Workout</h1>
+
+
+{% if g.user == workout.user %}
+<div class="card">
+    <div class="card-body">
+        <div>
+            <h4 class="card-title">{{ workout.title }}</h6>
+        </div>
+        <div>
+            <p class="card-text"><em>{{ workout.description }}</em></p>
+        </div>
+        <div>
+            <a class="btn btn-sm btn-primary" href="/workout/{{ workout.id}}/edit">Edit</a>
+            <a class="btn btn-sm btn-danger" href="/workout/{{ workout.id }}/delete">Delete</a>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+
+{% endblock %}
+{% endfor %}

@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Edit Workout
+{% endblock %}
+
+{% block content %}
+<h1>WORKOUT</h1>
+
+<div class="row justify-content-md-center">
+    <div class="col-md-4">
+        <form method="POST">
+            {{ form.hidden_tag() }}
+
+            {% for field in form if field.widget.input_type != 'hidden' %}
+            <p>
+                {{ field.label }}
+                {{ field (class_="form-control") }}
+
+                {% for error in field.errors %}
+                <span class="form-text text-danger">
+                    {{ error }}
+                </span>
+                {% endfor %}
+            </p>
+            {% endfor %}
+
+            <button class="btn btn-sm btn-success" type="submit">Save</button>
+            <a class="btn btn-sm btn-primary" href="/user/{{ g.user.id }}">Cancel</a>
+            <a class="btn btn-sm btn-danger" href="/workout/{{ workout.id }}/delete"><em>Delete Workout</em></a>
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}
