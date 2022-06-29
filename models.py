@@ -138,8 +138,7 @@ class Exercise(db.Model):
     )
 
     equipment_id = db.Column(
-        db.Integer,
-        unique=True
+        db.Integer
     )
 
 
@@ -164,17 +163,11 @@ class Equipment(db.Model):
 
     id = db.Column(
         db.Integer,
-        db.ForeignKey("exercises.equipment_id"),
         primary_key = True
     )
 
     name = db.Column(
         db.Text
-    )
-
-    equipment_id = db.relationship(
-        "Exercise",
-        backref="equipment"
     )
 
     def __repr__(self):
