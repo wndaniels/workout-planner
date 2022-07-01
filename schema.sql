@@ -41,7 +41,7 @@ CREATE TABLE workouts (
     user_id INTEGER NOT NULL REFERENCES users,
     title TEXT,
     description TEXT,
-    day_of_week INTEGER REFERENCES daysofweek,
+    days_id INTEGER REFERENCES daysofweek,
     equipment_id INTEGER REFERENCES equipment,
     exercise_id INTEGER REFERENCES exercises
 );

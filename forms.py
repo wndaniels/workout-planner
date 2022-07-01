@@ -1,3 +1,4 @@
+from email import message
 from email.policy import default
 from secrets import choice
 from typing import Text
@@ -46,12 +47,51 @@ class RegisterForm(FlaskForm):
 
     password = PasswordField(
         "Password", 
-        validators=[InputRequired()]
+        validators=[InputRequired(), EqualTo("confirm_password", message="Passwords must match")]
     )
 
     confirm_password = PasswordField(
-        "Confirm Password", 
-        validators=[InputRequired(), EqualTo("password")]
+        "Confirm Password"
+    )
+
+class EditUserFrom(FlaskForm):
+    """Edit User Information"""
+    
+    first_name = StringField(
+        "First Name",
+        validators=[InputRequired()]
+    )
+
+    last_name = StringField(
+        "Last Name", 
+        validators=[InputRequired()]
+    )
+
+    email = EmailField(
+        "Email", 
+        validators=[InputRequired()]
+    )
+
+    username = StringField(
+        "Username", 
+        validators=[InputRequired()]
+    )
+
+class UpdatePwdForm(FlaskForm):
+    """Update Password"""
+    current_pwd = PasswordField(
+        "Current Password",
+        validators=[InputRequired()]
+    )
+
+    new_pwd = PasswordField(
+        "New Password", 
+        validators=[InputRequired(), EqualTo("confirm_new_pwd", message="Passwords must match")]
+    )
+
+    confirm_new_pwd = PasswordField(
+        "Confirm New Password",
+        validators=[InputRequired()]
     )
 
 class CreateWorkoutForm(FlaskForm):
@@ -87,7 +127,7 @@ class EditWorkoutForm(FlaskForm):
         blank_text="Select a day of the week...",
         allow_blank=True,
         get_label='days_of_week',
-        validators=[Optional()]
+        validators=[InputRequired()]
     )
 
     exercise_id = QuerySelectField(
@@ -96,7 +136,7 @@ class EditWorkoutForm(FlaskForm):
         blank_text="Select an exercise...",
         allow_blank=True,
         get_label='name',
-        validators=[Optional()]
+        validators=[InputRequired()]
     )
 
    

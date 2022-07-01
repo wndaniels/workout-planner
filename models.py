@@ -81,6 +81,7 @@ class User(db.Model):
             return user
         else:
             return False
+            
     
     @classmethod
     def check_username(cls, username) -> bool:
@@ -102,17 +103,23 @@ class DaysOfWeek(db.Model):
 
     __tablename__ = "daysofweek"
 
-    days_of_week = db.Column(
-        db.Text,
+    id = db.Column(
+        db.Integer, 
         primary_key = True
     )
 
+    days_of_week = db.Column(
+        db.Text,
+        unique=True
+    )
+
     def __repr__(self):
-        return f"<DaysOfWeek {self.days_of_week}>"
+        return f"<DaysOfWeek {self.id}>"
     
     def serialize(self):
         return {
-            "day": self.days_of_week
+            "id": self.id,
+            "days_of_week": self.days_of_week
         }
     
 def days_query():
@@ -211,19 +218,22 @@ class Workout(db.Model):
         db.Text
     )
 
-    day_of_week = db.Column(
-        db.Text,
-        db.ForeignKey("daysofweek.days_of_week")
+    days_id = db.Column(
+        db.Integer,
+        db.ForeignKey("daysofweek.id"),
+        nullable = False
     )
 
     equipment_id = db.Column(
         db.Integer,
-        db.ForeignKey("equipment.id")
+        db.ForeignKey("equipment.id"),
+        nullable = False
     )
 
     exercise_id = db.Column(
         db.Integer,
-        db.ForeignKey("exercises.id")
+        db.ForeignKey("exercises.id"),
+        nullable = False
     )
 
     user = db.relationship(
@@ -255,7 +265,7 @@ class Workout(db.Model):
             "user_id": self.user_id,
             "title": self.title,
             "description": self.description,
-            "day_of_week": self.day_of_week,
+            "day_id": self.id,
             "equipment_id": self.equipment_id,
             "exercise_id": self.exercise_id
         }

@@ -1,14 +1,18 @@
 from crypt import methods
-import os 
+import os
+from click import edit 
 from flask import Flask, render_template, request, redirect, jsonify, session, g, flash
+from flask_bcrypt import Bcrypt
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 from werkzeug.exceptions import HTTPException
-from models import Equipment, db, connect_db, User, Workout
-from forms import LoginForm, RegisterForm, CreateWorkoutForm, EditWorkoutForm
+from werkzeug.security import generate_password_hash
+from models import DaysOfWeek, Equipment, db, connect_db, User, Workout, Exercise
+from forms import LoginForm, RegisterForm, EditUserFrom, UpdatePwdForm, CreateWorkoutForm, EditWorkoutForm
 
 CURR_USER_KEY = "curr_user"
 app = Flask(__name__)
+bcrypt = Bcrypt(app)
 
 DATABASE_URL = os.environ.get("DATABASE_URL", "postgresql:///workout_planner")
 
@@ -140,18 +144,6 @@ def register():
 
 
 
-@app.route("/user/<int:user_id>/edit", methods=["GET", "POST"])
-def edit_user(user_id):
-    """ Returns Edit User page, if user not logged in, will redirect to login page."""
-    if not g.user:
-        return redirect("/login")
-    
-    user = User.query.get_or_404(user_id)
-
-    return render_template("/user/edit_user.html", user=user)
-
-
-
 @app.route("/user/<int:user_id>", methods=["GET", "POST"])
 def user_home(user_id):
     """Returns Users home page, if user not logged in will redirect to login page."""
@@ -166,6 +158,70 @@ def user_home(user_id):
 
 
     return render_template("/user/user_home.html", user=user, workout=workout )
+
+
+@app.route("/user/<int:user_id>/edit", methods=["GET", "POST"])
+def edit_user(user_id):
+    """ Returns Edit User page, if user not logged in, will redirect to login page."""
+    if not g.user:
+        return redirect("/login")
+    
+    user = User.query.get_or_404(user_id)
+
+    form = EditUserFrom()
+
+
+    if form.validate_on_submit():
+        user.first_name = form.first_name.data
+        user.last_name = form.last_name.data
+        user.email = form.email.data
+        user.username = form.username.data
+        
+        db.session.commit()
+        return redirect(f"/user/{g.user.id}")
+    
+    elif request.method == "GET":
+        form.first_name.data = user.first_name
+        form.last_name.data = user.last_name
+        form.email.data = user.email
+        form.username.data = user.username
+
+    return render_template("/user/edit_user.html", user=user, form=form)
+
+
+@app.route('/user/<int:user_id>/password/change', methods=["GET", "POST"])
+def update_password(user_id):
+    if not g.user:
+        return redirect("/login")
+    
+    user = User.query.get_or_404(user_id)
+
+    form = UpdatePwdForm()
+
+    if form.validate_on_submit():
+        user.password = bcrypt.generate_password_hash(form.new_pwd.data).decode("utf-8")
+        db.session.commit()
+        flash("Password has been updated")
+        return redirect(f"/user/{g.user.id}")
+
+    return render_template("/user/update_pwd.html", user=user, form=form)
+
+
+
+@app.route('/user/delete', methods=["POST"])
+def delete_user():
+    """Delete user."""
+
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    do_logout()
+
+    db.session.delete(g.user)
+    db.session.commit()
+
+    return redirect("/login")
 
 
 
@@ -202,12 +258,14 @@ def create_workout():
         return redirect(f"/user/{g.user.id}")
 
     return render_template("workout/create_workout.html", form=form)
+    
 
 
 
 @app.route("/workout/<int:workout_id>/edit", methods=["GET", "POST"])
 def edit_workout(workout_id):
-
+    """Allows user to edit their workout title and description, as well as add workouts to 
+        specific days of week, and delete """
     if not g.user:
         return redirect("/")
 
@@ -216,14 +274,22 @@ def edit_workout(workout_id):
     form = EditWorkoutForm(obj=workout)
 
     if form.validate_on_submit():
+        equip = Equipment.query.get_or_404(form.exercise_id.data.equipment_id)
         workout.title = form.title.data
         workout.description = form.description.data
         workout.days = form.day_of_week.data
-        workout.exercise = form.exercise_id.data
-        workout.equipment
+        workout.exercise = form.exercise_id.data or workout.exercise_id.name
+        workout.equipment_id = equip.id
         
         db.session.commit()
         return redirect(f"/user/{g.user.id}")
+    
+    elif request.method == "GET":
+        form.title.data = workout.title
+        form.description.data = workout.description
+        form.day_of_week.data = DaysOfWeek.query.filter_by(id=workout.days_id).first()
+        form.exercise_id.data = Exercise.query.filter_by(id=workout.exercise_id).first()
+
     
     return render_template("workout/edit_workout.html", form=form, workout=workout)
 

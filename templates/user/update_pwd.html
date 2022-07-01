@@ -25,11 +25,8 @@ Edit User
                 {% endfor %}
             </p>
             {% endfor %}
-            <button class="btn btn-sm btn-success" type="submit">Save</button>
+            <button class="btn btn-sm btn-success" type="submit"><em>Update Password</em></button>
             <a class="btn btn-sm btn-primary" href="/user/{{ g.user.id }}">Cancel</a>
-            <form method="POST" action="/users/delete" class="form-inline">
-                <button class="btn btn-sm btn-danger"><em>Delete Account</em></button>
-            </form>
         </form>
     </div>
 </div>
