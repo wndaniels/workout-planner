@@ -8,7 +8,7 @@ from sqlalchemy.exc import IntegrityError
 from werkzeug.exceptions import HTTPException
 from werkzeug.security import generate_password_hash
 from models import DaysOfWeek, Equipment, db, connect_db, User, Workout, Exercise
-from forms import LoginForm, RegisterForm, EditUserFrom, UpdatePwdForm, CreateWorkoutForm, EditWorkoutForm
+from forms import LoginForm, RegisterForm, EditUserFrom, UpdatePwdForm, WorkoutInfoForm, AddExercToWorkoutForm
 
 CURR_USER_KEY = "curr_user"
 app = Flask(__name__)
@@ -201,7 +201,7 @@ def update_password(user_id):
     if form.validate_on_submit():
         user.password = bcrypt.generate_password_hash(form.new_pwd.data).decode("utf-8")
         db.session.commit()
-        flash("Password has been updated")
+        flash("Password has been updated", 'success')
         return redirect(f"/user/{g.user.id}")
 
     return render_template("/user/update_pwd.html", user=user, form=form)
@@ -249,7 +249,7 @@ def create_workout():
     if g.user.workouts:
         return redirect(f"/user/{g.user.id}")
     
-    form = CreateWorkoutForm()
+    form = WorkoutInfoForm()
 
     if form.validate_on_submit():
         new_workout = Workout(user_id=g.user.id, title=form.title.data, description=form.description.data) 
@@ -271,12 +271,34 @@ def edit_workout(workout_id):
 
     workout = Workout.query.get_or_404(workout_id)
     
-    form = EditWorkoutForm(obj=workout)
+    form = WorkoutInfoForm(obj=workout)
+
+    if form.validate_on_submit():
+        workout.title = form.title.data
+        workout.description = form.description.data
+        
+        db.session.commit()
+        return redirect(f"/user/{g.user.id}")
+    
+    elif request.method == "GET":
+        form.title.data = workout.title
+        form.description.data = workout.description
+
+    
+    return render_template("workout/edit_workout.html", form=form, workout=workout)
+
+
+@app.route("/workout/<int:workout_id>/add-exercise", methods=["GET", "POST"])
+def add_exercise(workout_id):
+    if not g.user:
+        return redirect("/")
+
+    workout = Workout.query.get_or_404(workout_id)
+
+    form = AddExercToWorkoutForm()
 
     if form.validate_on_submit():
         equip = Equipment.query.get_or_404(form.exercise_id.data.equipment_id)
-        workout.title = form.title.data
-        workout.description = form.description.data
         workout.days = form.day_of_week.data
         workout.exercise = form.exercise_id.data or workout.exercise_id.name
         workout.equipment_id = equip.id
@@ -285,13 +307,12 @@ def edit_workout(workout_id):
         return redirect(f"/user/{g.user.id}")
     
     elif request.method == "GET":
-        form.title.data = workout.title
-        form.description.data = workout.description
         form.day_of_week.data = DaysOfWeek.query.filter_by(id=workout.days_id).first()
         form.exercise_id.data = Exercise.query.filter_by(id=workout.exercise_id).first()
 
+    return render_template("workout/manual_exerc_add.html", form=form, workout=workout)
+
     
-    return render_template("workout/edit_workout.html", form=form, workout=workout)
 
 
 @app.route("/workout/<int:workout_id>/delete", methods=["GET","POST"])
@@ -308,6 +329,17 @@ def delete_workout(workout_id):
     return redirect(f"/user/{g.user.id}")
 
 
+
+####
+### EXERCISE ROUTE HANDlING ###
+####
+
+@app.route("/exercise/<int:exercise_id>", methods=["GET"])
+def exercise_show(exercise_id):
+
+    exerc = Exercise.query.get_or_404(exercise_id)
+
+    return render_template("exercise/exercise_show.html", exerc=exerc)
 
 
 

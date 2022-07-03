@@ -34,9 +34,8 @@ newExercData = []
 exerc_data = requests.get("https://wger.de/api/v2/exercise/?format=json&limit=231&language=2").json()
 
 for exerc in exerc_data["results"]:
-    equip_id = exerc["equipment"]
-    for equip in range(len(equip_id)):
-        newExercData.append(Exercise(name=exerc["name"], description=exerc["description"], equipment_id=(equip_id[equip])))
+    equip_id = exerc["equipment"][0] if len(exerc["equipment"]) > 0 else 7
+    newExercData.append(Exercise(name=exerc["name"], description=exerc["description"], equipment_id=equip_id))
 
 db.session.add_all(newExercData)
 db.session.commit()

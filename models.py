@@ -220,20 +220,17 @@ class Workout(db.Model):
 
     days_id = db.Column(
         db.Integer,
-        db.ForeignKey("daysofweek.id"),
-        nullable = False
+        db.ForeignKey("daysofweek.id")
     )
 
     equipment_id = db.Column(
         db.Integer,
-        db.ForeignKey("equipment.id"),
-        nullable = False
+        db.ForeignKey("equipment.id")
     )
 
     exercise_id = db.Column(
         db.Integer,
-        db.ForeignKey("exercises.id"),
-        nullable = False
+        db.ForeignKey("exercises.id")
     )
 
     user = db.relationship(

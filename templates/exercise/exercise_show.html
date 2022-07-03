@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}
+User Home
+{% endblock %}
+
+{% block content %}
+<h1>Home</h1>
+
+<div class="row justify-content-md-center">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <div>
+                    <h4 class="card-title">
+                        {{ exerc.name }}
+                    </h4>
+                </div>
+                <div>
+                    <ul>
+                        <li><b>Description:</b> {{ exerc.description }} </li>
+                        <li><b>Equipment:</b> {{ exerc.equipment_id.name }} </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}

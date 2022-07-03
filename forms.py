@@ -94,7 +94,7 @@ class UpdatePwdForm(FlaskForm):
         validators=[InputRequired()]
     )
 
-class CreateWorkoutForm(FlaskForm):
+class WorkoutInfoForm(FlaskForm):
     """Create Workout Template"""
 
     title = StringField(
@@ -108,19 +108,7 @@ class CreateWorkoutForm(FlaskForm):
     )
 
 
-class EditWorkoutForm(FlaskForm):
-    """Add Exercise and Choose Days"""
-    title = StringField(
-        "Title", 
-        validators=[InputRequired()]
-    )
-
-    description = TextAreaField(
-        "Description", 
-        validators=[Optional()]
-    )
-
-
+class AddExercToWorkoutForm(FlaskForm):
     day_of_week = QuerySelectField(
         "Day of Week", 
         query_factory=days_query,
@@ -139,4 +127,8 @@ class EditWorkoutForm(FlaskForm):
         validators=[InputRequired()]
     )
 
+class ExerciseSearchForm(FlaskForm):
+    choices = excer_query,
+    select = SelectField("Search exercises:", choices=choices),
+    search = StringField('')
    
