@@ -149,6 +149,8 @@ class Equipment(db.Model):
             "name": self.name
         }
 
+
+
 class Exercise(db.Model):
     """Exercise Model"""
 

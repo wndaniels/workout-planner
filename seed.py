@@ -1,6 +1,7 @@
 import this
 import requests
 from app import db, app
+from bs4 import BeautifulSoup
 from models import DaysOfWeek, Equipment, Exercise
 
 db.drop_all()
@@ -35,7 +36,10 @@ exerc_data = requests.get("https://wger.de/api/v2/exercise/?format=json&limit=23
 
 for exerc in exerc_data["results"]:
     equip_id = exerc["equipment"][0] if len(exerc["equipment"]) > 0 else 7
-    newExercData.append(Exercise(name=exerc["name"], description=exerc["description"], equipment_id=equip_id))
+    descript = exerc["description"]
+    soup = BeautifulSoup(descript, features='html.parser')
+
+    newExercData.append(Exercise(name=exerc["name"], description=soup.get_text(), equipment_id=equip_id))
 
 db.session.add_all(newExercData)
 db.session.commit()

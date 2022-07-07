@@ -14,31 +14,35 @@ User Home
         <div class="card">
             <div class="card-body">
                 <div>
-                    <h4 class="card-title">
+                    <h2 class="card-title">
                         {{ workout.title }}
-                    </h4>
-                    <div>
                         <a class="btn btn-sm btn-primary" href="/workout/{{ workout.id }}/edit">
                             <i class="fa-solid fa-pen"></i>
                         </a>
                         <a class="btn btn-sm btn-danger" href="/workout/{{ workout.id }}/add-exercise">
                             <i class="fa-solid fa-plus"></i>
                         </a>
-                    </div>
-
+                    </h2>
                 </div>
+
                 <div>
-                    <p class="card-text"><em>{{ workout.description }}</em></p>
+                    <h4 class="card-text">
+                        <p><em>{{ workout.description }}</em></p>
+                    </h4>
                 </div>
                 <div>
                     <ul>
+                        {% if workout.days %}
                         <li><b>Day Of Week:</b> {{ workout.days.days_of_week }}</li>
+                        {% endif %}
+                        {% if workout.exercise %}
                         <li><b>Excercises:</b>
                             <a href="/exercise/{{workout.exercise_id}}">
                                 {{ workout.exercise.name }}
                             </a>
                         </li>
                         <li><b>Equipment:</b> {{ workout.equipment.name }} </li>
+                        {% endif %}
                     </ul>
                 </div>
             </div>

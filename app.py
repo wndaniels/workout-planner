@@ -2,13 +2,14 @@ from crypt import methods
 import os
 from click import edit 
 from flask import Flask, render_template, request, redirect, jsonify, session, g, flash
+from bs4 import BeautifulSoup
 from flask_bcrypt import Bcrypt
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 from werkzeug.exceptions import HTTPException
 from werkzeug.security import generate_password_hash
 from models import DaysOfWeek, Equipment, db, connect_db, User, Workout, Exercise
-from forms import LoginForm, RegisterForm, EditUserFrom, UpdatePwdForm, WorkoutInfoForm, AddExercToWorkoutForm
+from forms import LoginForm, RegisterForm, EditUserFrom, UpdatePwdForm, WorkoutInfoForm, AddExercToWorkoutForm, ExerciseSearchForm
 
 CURR_USER_KEY = "curr_user"
 app = Flask(__name__)
@@ -298,10 +299,11 @@ def add_exercise(workout_id):
     form = AddExercToWorkoutForm()
 
     if form.validate_on_submit():
-        equip = Equipment.query.get_or_404(form.exercise_id.data.equipment_id)
         workout.days = form.day_of_week.data
-        workout.exercise = form.exercise_id.data or workout.exercise_id.name
-        workout.equipment_id = equip.id
+        workout.exercise = form.exercise_id.data
+        if workout.exercise:
+            equip = Equipment.query.get_or_404(form.exercise_id.data.equipment_id)
+            workout.equipment_id = equip.id
         
         db.session.commit()
         return redirect(f"/user/{g.user.id}")
@@ -338,8 +340,9 @@ def delete_workout(workout_id):
 def exercise_show(exercise_id):
 
     exerc = Exercise.query.get_or_404(exercise_id)
+    equip = Exercise.query.filter_by(equipment_id=exerc.equipment_id)
 
-    return render_template("exercise/exercise_show.html", exerc=exerc)
+    return render_template("exercise/exercise_show.html", exerc=exerc, equip=equip)
 
 
 
