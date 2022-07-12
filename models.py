@@ -223,14 +223,34 @@ class Workout(db.Model):
         db.ForeignKey("daysofweek.id")
     )
 
-    exercise_id = db.Column(
+    exercise_id_1 = db.Column(
         db.Integer,
         db.ForeignKey("exercises.id")
     )
 
-    equipment_id = db.Column(
+    exercise_id_2 = db.Column(
         db.Integer,
-        db.ForeignKey("equipment.id")
+        db.ForeignKey("exercises.id")
+    )
+
+    exercise_id_3 = db.Column(
+        db.Integer,
+        db.ForeignKey("exercises.id")
+    )
+
+    exercise_id_4 = db.Column(
+        db.Integer,
+        db.ForeignKey("exercises.id")
+    )
+
+    exercise_id_5 = db.Column(
+        db.Integer,
+        db.ForeignKey("exercises.id")
+    )
+
+    exercise_id_6 = db.Column(
+        db.Integer,
+        db.ForeignKey("exercises.id")
     )
 
     user = db.relationship(
@@ -243,14 +263,34 @@ class Workout(db.Model):
         backref="workouts"
     )
 
-    exercise = db.relationship(
+    exercise_1 = db.relationship(
         "Exercise",
-        backref="workouts"
+        foreign_keys=[exercise_id_1]
     )
 
-    equipment = db.relationship(
-        "Equipment", 
-        backref="workouts"
+    exercise_2 = db.relationship(
+        "Exercise",
+        foreign_keys=[exercise_id_2]
+    )
+
+    exercise_3 = db.relationship(
+        "Exercise",
+        foreign_keys=[exercise_id_3]
+    )
+
+    exercise_4 = db.relationship(
+        "Exercise",
+        foreign_keys=[exercise_id_4]
+    )
+
+    exercise_5 = db.relationship(
+        "Exercise",
+        foreign_keys=[exercise_id_5]
+    )
+
+    exercise_6 = db.relationship(
+        "Exercise",
+        foreign_keys=[exercise_id_6]
     )
     
     def __repr__(self):
@@ -263,7 +303,11 @@ class Workout(db.Model):
             "title": self.title,
             "description": self.description,
             "day_id": self.id,
-            "equipment_id": self.equipment_id,
-            "exercise_id": self.exercise_id
+            "equipment_id_1": self.equipment_id_1,
+            "equipment_id_2": self.equipment_id_2,
+            "equipment_id_3": self.equipment_id_3,
+            "equipment_id_4": self.equipment_id_4,
+            "equipment_id_5": self.equipment_id_5,
+            "equipment_id_6": self.equipment_id_6,
         }
 

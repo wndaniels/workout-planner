@@ -43,7 +43,11 @@ CREATE TABLE workouts (
     title TEXT,
     description TEXT,
     days_id INTEGER REFERENCES daysofweek,
-    exercise_id INTEGER REFERENCES exercises,
-    equipment_id INTEGER REFERENCES equipment
+    exercise_id_1 INTEGER REFERENCES exercises,
+    exercise_id_2 INTEGER REFERENCES exercises,
+    exercise_id_3 INTEGER REFERENCES exercises,
+    exercise_id_4 INTEGER REFERENCES exercises,
+    exercise_id_5 INTEGER REFERENCES exercises,
+    exercise_id_6 INTEGER REFERENCES exercises
 );
 

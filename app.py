@@ -300,17 +300,14 @@ def add_exercise(workout_id):
 
     if form.validate_on_submit():
         workout.days = form.day_of_week.data
-        workout.exercise = form.exercise_id.data
-        if workout.exercise:
-            equip = Equipment.query.get_or_404(form.exercise_id.data.equipment_id)
-            workout.equipment_id = equip.id
+        workout.exercise_1 = form.exercise_id.data
         
         db.session.commit()
         return redirect(f"/user/{g.user.id}")
     
-    elif request.method == "GET":
-        form.day_of_week.data = DaysOfWeek.query.filter_by(id=workout.days_id).first()
-        form.exercise_id.data = Exercise.query.filter_by(id=workout.exercise_id).first()
+    # elif request.method == "GET":
+    #     form.day_of_week.data = DaysOfWeek.query.filter_by(id=workout.days_id).first()
+    #     form.exercise_id.data = Exercise.query.filter_by(id=workout.exercise_id).first()
     
 
     return render_template("workout/manual_exerc_add.html", form=form, workout=workout)
