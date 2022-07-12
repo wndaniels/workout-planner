@@ -149,8 +149,6 @@ class Equipment(db.Model):
             "name": self.name
         }
 
-
-
 class Exercise(db.Model):
     """Exercise Model"""
 
@@ -225,14 +223,14 @@ class Workout(db.Model):
         db.ForeignKey("daysofweek.id")
     )
 
-    equipment_id = db.Column(
-        db.Integer,
-        db.ForeignKey("equipment.id")
-    )
-
     exercise_id = db.Column(
         db.Integer,
         db.ForeignKey("exercises.id")
+    )
+
+    equipment_id = db.Column(
+        db.Integer,
+        db.ForeignKey("equipment.id")
     )
 
     user = db.relationship(
@@ -245,16 +243,16 @@ class Workout(db.Model):
         backref="workouts"
     )
 
-    equipment = db.relationship(
-        "Equipment", 
-        backref="workouts"
-    )
-
     exercise = db.relationship(
         "Exercise",
         backref="workouts"
     )
 
+    equipment = db.relationship(
+        "Equipment", 
+        backref="workouts"
+    )
+    
     def __repr__(self):
         return f"<Workout {self.id}>"
     

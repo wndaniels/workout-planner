@@ -36,13 +36,14 @@ CREATE TABLE exercises (
     equipment_id INTEGER REFERENCES equipment
 );
 
+
 CREATE TABLE workouts (
     id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL REFERENCES users,
     title TEXT,
     description TEXT,
     days_id INTEGER REFERENCES daysofweek,
-    equipment_id INTEGER REFERENCES equipment,
-    exercise_id INTEGER REFERENCES exercises
+    exercise_id INTEGER REFERENCES exercises,
+    equipment_id INTEGER REFERENCES equipment
 );
 

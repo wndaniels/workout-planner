@@ -311,10 +311,25 @@ def add_exercise(workout_id):
     elif request.method == "GET":
         form.day_of_week.data = DaysOfWeek.query.filter_by(id=workout.days_id).first()
         form.exercise_id.data = Exercise.query.filter_by(id=workout.exercise_id).first()
+    
 
     return render_template("workout/manual_exerc_add.html", form=form, workout=workout)
 
+
+@app.route("/workout/<int:workout_id>/delete-exercise")
+def delete_exercise(workout_id):
+    if not g.user:
+        return redirect("/")
     
+    workout = Workout.query.get_or_404(workout_id)
+    exercise_id = Exercise.query.filter_by(id=workout.exercise_id).first()
+    equipment_id = Equipment.query.filter_by(id=workout.equipment_id).first()
+
+    db.session.delete(exercise_id)
+    db.session.delete(equipment_id)
+    db.session.commit()
+
+    return redirect(f"/user/{g.user.id}")
 
 
 @app.route("/workout/<int:workout_id>/delete", methods=["GET","POST"])
@@ -341,6 +356,7 @@ def exercise_show(exercise_id):
 
     exerc = Exercise.query.get_or_404(exercise_id)
     equip = Exercise.query.filter_by(equipment_id=exerc.equipment_id)
+
 
     return render_template("exercise/exercise_show.html", exerc=exerc, equip=equip)
 

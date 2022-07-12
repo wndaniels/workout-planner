@@ -1,11 +1,10 @@
 {% extends 'base.html' %}
 
 {% block title %}
-User Home
+Workout Planner
 {% endblock %}
 
 {% block content %}
-<h1>Home</h1>
 
 {% for workout in workout %}
 {% if g.user == workout.user %}
@@ -26,9 +25,9 @@ User Home
                 </div>
 
                 <div>
-                    <h4 class="card-text">
+                    <h5 class="card-text">
                         <p><em>{{ workout.description }}</em></p>
-                    </h4>
+                    </h5>
                 </div>
                 <div>
                     <ul>
@@ -36,12 +35,19 @@ User Home
                         <li><b>Day Of Week:</b> {{ workout.days.days_of_week }}</li>
                         {% endif %}
                         {% if workout.exercise %}
-                        <li><b>Excercises:</b>
-                            <a href="/exercise/{{workout.exercise_id}}">
-                                {{ workout.exercise.name }}
-                            </a>
+                        <li>
+                            <b>Excercises:</b>
+                            <ul>
+                                <li>
+                                    <a href="/exercise/{{workout.exercise_id}}">
+                                        {{ workout.exercise.name }}
+                                    </a>
+                                    <a class="btn btn-sm" href="/workout/{{ workout.id }}/delete-exercise">
+                                        <i class="fa-solid fa-circle-xmark"></i>
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
-                        <li><b>Equipment:</b> {{ workout.equipment.name }} </li>
                         {% endif %}
                     </ul>
                 </div>
