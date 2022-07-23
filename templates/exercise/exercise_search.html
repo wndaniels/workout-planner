@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Add Exercise
+{% endblock %}
+
+{% block content %}
+
+<h2>Exercise Search: <em>"{{ searched }}"</em></h2>
+
+
+{% if not exerc %}
+<p>
+    No exercise found countaining the word <em>"{{ searched }}"</em>
+</p>
+
+{% else %}
+{% for exercise in exerc %}
+<ul>
+    <li>
+        <a href="/exercise/{{ exercise.id }}">{{exercise.name}}<br /></a>
+    </li>
+</ul>
+{% endfor %}
+{% endif %}
+
+{% endblock %}

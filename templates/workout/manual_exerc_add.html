@@ -13,7 +13,7 @@ Add Exercise
 
             {% for field in form if field.widget.input_type != 'hidden' %}
             <p>
-                {{ field.label }}
+                {{ field.label (id="day-exerc-lable") }}
                 {{ field (class_="form-control") }}
 
                 {% for error in field.errors %}

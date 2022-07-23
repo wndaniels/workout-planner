@@ -4,7 +4,7 @@ from math import sqrt
 from turtle import back
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
-from sqlalchemy import ForeignKey, Unicode, null
+from sqlalchemy import ForeignKey, Unicode, null, func
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.orm import backref
 
@@ -21,6 +21,10 @@ def connect_db(app):
     db.app = app
     db.init_app(app)
 
+################################################################################################################################
+### USER MODEL ###
+################################################################################################################################
+
 class User(db.Model):
     """User Model"""
 
@@ -34,12 +38,12 @@ class User(db.Model):
 
     first_name = db.Column(
         db.Text,
-        nullable = False
+        nullable = True
     )
 
     last_name = db.Column(
         db.Text,
-        nullable = False
+        nullable = True
     )
 
     email = db.Column(
@@ -69,13 +73,15 @@ class User(db.Model):
         hashed = bcrypt.generate_password_hash(pwd, rounds=12)
         hashed_utf8 = hashed.decode("utf8")
 
-        user = cls(username=username, password=hashed_utf8, email=email, first_name=first_name, last_name=last_name)
+        user = cls(username=username.lower(), password=hashed_utf8, email=email.lower(), first_name=first_name, last_name=last_name)
         submit_data(user)
 
         return user
+
+
     @classmethod
     def authenticate(cls, username, pwd):
-        user = cls.query.filter_by(username=username).one_or_none()
+        user = cls.query.filter_by(username=username.lower()).one_or_none()
 
         if user and bcrypt.check_password_hash(user.password, pwd):
             return user
@@ -85,7 +91,7 @@ class User(db.Model):
     
     @classmethod
     def check_username(cls, username) -> bool:
-        return cls.query.filter_by(username=username).one_or_none()
+        return cls.query.filter_by(username=username.lower()).one_or_none()
 
     def serialize(self):
         return {
@@ -97,6 +103,9 @@ class User(db.Model):
         }
 
 
+################################################################################################################################
+### DAYS OF WEEK MODEL ###
+################################################################################################################################
 
 class DaysOfWeek(db.Model):
     """DaysOfWeek Model"""
@@ -125,6 +134,10 @@ class DaysOfWeek(db.Model):
 def days_query():
         return DaysOfWeek.query
 
+
+################################################################################################################################
+### EQUIPMENT MODEL ###
+################################################################################################################################
     
 class Equipment(db.Model):
     """Equipment Model"""
@@ -148,6 +161,11 @@ class Equipment(db.Model):
             "id": self.id,
             "name": self.name
         }
+
+
+################################################################################################################################
+### EXERCISE MODEL ###
+################################################################################################################################
 
 class Exercise(db.Model):
     """Exercise Model"""
@@ -193,6 +211,10 @@ def excer_query():
         return Exercise.query
 
 
+################################################################################################################################
+### WORKOUT MODEL ###
+################################################################################################################################
+
 class Workout(db.Model):
     """Workout Model"""
 
@@ -206,7 +228,7 @@ class Workout(db.Model):
 
     user_id = db.Column(
         db.Integer,
-        db.ForeignKey('users.id'),
+        db.ForeignKey("users.id", ondelete="cascade"),
         nullable = False
     )
 
@@ -218,39 +240,64 @@ class Workout(db.Model):
         db.Text
     )
 
-    days_id = db.Column(
+    days_id_1 = db.Column(
         db.Integer,
-        db.ForeignKey("daysofweek.id")
+        db.ForeignKey("daysofweek.id", ondelete="cascade")
+    )
+
+    days_id_2 = db.Column(
+        db.Integer,
+        db.ForeignKey("daysofweek.id", ondelete="cascade")
+    )
+
+    days_id_3 = db.Column(
+        db.Integer,
+        db.ForeignKey("daysofweek.id", ondelete="cascade")
     )
 
     exercise_id_1 = db.Column(
         db.Integer,
-        db.ForeignKey("exercises.id")
+        db.ForeignKey("exercises.id", ondelete="cascade")
     )
 
     exercise_id_2 = db.Column(
         db.Integer,
-        db.ForeignKey("exercises.id")
+        db.ForeignKey("exercises.id", ondelete="cascade")
     )
 
     exercise_id_3 = db.Column(
         db.Integer,
-        db.ForeignKey("exercises.id")
+        db.ForeignKey("exercises.id", ondelete="cascade")
     )
 
     exercise_id_4 = db.Column(
         db.Integer,
-        db.ForeignKey("exercises.id")
+        db.ForeignKey("exercises.id", ondelete="cascade")
     )
 
     exercise_id_5 = db.Column(
         db.Integer,
-        db.ForeignKey("exercises.id")
+        db.ForeignKey("exercises.id", ondelete="cascade")
     )
 
     exercise_id_6 = db.Column(
         db.Integer,
-        db.ForeignKey("exercises.id")
+        db.ForeignKey("exercises.id", ondelete="cascade")
+    )
+
+    exercise_id_7 = db.Column(
+        db.Integer,
+        db.ForeignKey("exercises.id", ondelete="cascade")
+    )
+
+    exercise_id_8 = db.Column(
+        db.Integer,
+        db.ForeignKey("exercises.id", ondelete="cascade")
+    )
+
+    exercise_id_9 = db.Column(
+        db.Integer,
+        db.ForeignKey("exercises.id", ondelete="cascade")
     )
 
     user = db.relationship(
@@ -258,9 +305,19 @@ class Workout(db.Model):
         backref="workouts"
     )
 
-    days = db.relationship(
+    day_1 = db.relationship(
         "DaysOfWeek",
-        backref="workouts"
+        foreign_keys=[days_id_1]
+    )
+
+    day_2 = db.relationship(
+        "DaysOfWeek",
+        foreign_keys=[days_id_2]
+    )
+
+    day_3 = db.relationship(
+        "DaysOfWeek",
+        foreign_keys=[days_id_3]
     )
 
     exercise_1 = db.relationship(
@@ -291,6 +348,21 @@ class Workout(db.Model):
     exercise_6 = db.relationship(
         "Exercise",
         foreign_keys=[exercise_id_6]
+    )
+
+    exercise_7 = db.relationship(
+        "Exercise",
+        foreign_keys=[exercise_id_7]
+    )
+
+    exercise_8 = db.relationship(
+        "Exercise",
+        foreign_keys=[exercise_id_8]
+    )
+
+    exercise_9 = db.relationship(
+        "Exercise",
+        foreign_keys=[exercise_id_9]
     )
     
     def __repr__(self):

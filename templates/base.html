@@ -10,9 +10,13 @@
     <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
     <link rel="stylesheet" href="/static/style.css">
 
-    <script src="https://unpkg.com/jquery"></script>
-    <script src="https://unpkg.com/popper"></script>
-    <script src="https://unpkg.com/bootstrap"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js"
+        integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.min.js"
+        integrity="sha384-ODmDIVzN+pFdexxHEHFBQH3/9/vQ9uori45z4JjnFsRydbmQbmL5t1tQ0culUzyK"
+        crossorigin="anonymous"></script>
+
     <script src="https://kit.fontawesome.com/3557b875de.js" crossorigin="anonymous"></script>
 
     <title>{% block title %} {% endblock %}</title>
@@ -38,15 +42,16 @@
                 </li>
                 {% else %}
                 <li class="nav-item"></li>
-                <form class="d-flex" action="/user">
-                    <input name="q" type="search" class="form-control" placeholder="Search for Exercises..."
-                        id="search">
+                <form method="POST" class="d-flex" action="/search">
+                    {{ form.hidden_tag() }}
+                    <input type="search" class="form-control" name="searched""
+                        placeholder=" Search for Exercises..." id="search">
                     <button class="btn btn-sm btn-outline">
                         <span class="fa fa-search"></span>
                     </button>
                 </form>
                 {% if g.user.workouts %}
-
+                <a class="nav-link" href="/">Home</a>
                 {% else %}
                 <a class="nav-link" href="/workout/create">Create Workout</a>
                 {% endif %}
@@ -76,6 +81,8 @@
         {% endfor %}
         {% block content %}
         {% endblock %}
+
+
 </body>
 
 </html>

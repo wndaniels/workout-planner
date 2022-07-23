@@ -6,7 +6,7 @@ Register
 
 {% block content %}
 
-<p class="lead"> Register with the details below!<br><em>Have an account? <a href="/login">Login</a></em></p>
+<p class="lead"> Register with the details below!<br><em>Have an account? <a href="/login">Login Here!</a></em></p>
 
 <form method="POST">
     {{ form.hidden_tag() }}
@@ -15,7 +15,7 @@ Register
     if field.widget.input_type != 'hidden' %}
     <p>
         {{ field.label }}
-        {{ field (class_="form-control") }}
+        {{ field (class_="form-control", novalidate=True) }}
 
         {% for error in field.errors %}
         <span class="form-text text-danger">
@@ -27,6 +27,8 @@ Register
 
     <button class="btn btn-success" type="submit">Register User</button>
 </form>
+<br>
+<p><em>* Input Required</em></p>
 
 <!-- MODAL?? -->
 

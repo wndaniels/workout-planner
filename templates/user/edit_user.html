@@ -8,28 +8,42 @@ Edit User
 
 <div class="row justify-content-md-center">
     <div class="col-md-4">
-        <form method="POST">
+        <div>
+            <form method="POST">
 
-            {{ form.hidden_tag() }}
+                {{ form.hidden_tag() }}
 
-            {% for field in form if field.widget.input_type != 'hidden' %}
-            <p>
-                {{ field.label }}
-                {{ field (class_="form-control") }}
+                {% for field in form if field.widget.input_type != 'hidden' %}
+                <p>
+                    {{ field.label }}
+                    {{ field (class_="form-control", novalidate=True) }}
 
-                {% for error in field.errors %}
-                <span class="form-text text-danger">
-                    {{ error }}
-                </span>
+                    {% for error in field.errors %}
+                    <span class="form-text text-danger">
+                        {{ error }}
+                    </span>
+                    {% endfor %}
+                </p>
                 {% endfor %}
-            </p>
-            {% endfor %}
-            <button class="btn btn-sm btn-success" type="submit">Save</button>
-            <a class="btn btn-sm btn-primary" href="/user/{{ g.user.id }}">Cancel</a>
-            <form method="POST" action="/users/delete">
-                <button class="btn btn-sm btn-danger"><em>Delete Account</em></button>
+                <div>
+                    <button class="btn btn-sm btn-success" type="submit">Save</button>
+                </div>
+                <div>
+                    <a class="btn btn-sm btn-primary" href="/user/{{ g.user.id }}">Cancel</a>
+                </div>
             </form>
-        </form>
+            <div>
+                {% if g.user.id == user.id %}
+                <form method="POST" action="/user/{{ g.user.id }}/delete">
+                    <button class="btn btn-sm btn-outline-danger"><em>Delete Profile</em></button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+        <br>
+        <div>
+            <p><em>* Input Required</em></p>
+        </div>
     </div>
 </div>
 

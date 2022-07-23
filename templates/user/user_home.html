@@ -16,80 +16,124 @@ Workout Planner
                     <h2 class="card-title">
                         {{ workout.title }}
                         <a class="btn btn-sm btn-primary" href="/workout/{{ workout.id }}/edit">
-                            <i class="fa-solid fa-pen"></i>
+                            Edit
                         </a>
                         <a class="btn btn-sm btn-danger" href="/workout/{{ workout.id }}/add-exercise">
-                            <i class="fa-solid fa-plus"></i>
+                            Add/Edit Exercise List
                         </a>
                     </h2>
                 </div>
-
                 <div>
-                    <h5 class="card-text">
-                        <p><em>{{ workout.description }}</em></p>
-                    </h5>
+                    <p class="card-text">
+                    <p><em>{{ workout.description }}</em></p>
+                    </p>
                 </div>
+                <hr>
                 <div>
+
+
+                    {% if workout.exercise_id_1 or workout.exercise_id_2 or workout.exercise_id_3 or
+                    workout.exercise_id_4 or workout.exercise_id_5 or workout.exercise_id_6 or workout.exercise_id_7 or
+                    workout.exercise_id_8 or workout.exercise_id_9 %}
+
                     <ul>
-                        {% if workout.days %}
-                        <li><b>Day Of Week:</b> {{ workout.days.days_of_week }}</li>
+                        {% if workout.exercise_id_1 %}
+                        <b>{{ workout.day_1.days_of_week }}</b>
+                        <ul>
+                            <li>
+                                <a href="/exercise/{{workout.exercise_id_1}}">
+                                    {{ workout.exercise_1.name }}
+                                </a>
+                            </li>
+                        </ul>
                         {% endif %}
-                        {% if workout.exercise %}
-                        <li>
-                            <b>Excercises:</b>
-                            <ul>
-                                <li>
-                                    <a href="/exercise/{{workout.exercise_id_1}}">
-                                        {{ workout.exercise_1.name }}
-                                    </a>
-                                    <a class="btn btn-sm" href="/workout/{{ workout.id }}/delete-exercise">
-                                        <i class="fa-solid fa-circle-xmark"></i>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="/exercise/{{workout.exercise_id_2}}">
-                                        {{ workout.exercise_2.name }}
-                                    </a>
-                                    <a class="btn btn-sm" href="/workout/{{ workout.id }}/delete-exercise">
-                                        <i class="fa-solid fa-circle-xmark"></i>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="/exercise/{{workout.exercise_id_3}}">
-                                        {{ workout.exercise_3.name }}
-                                    </a>
-                                    <a class="btn btn-sm" href="/workout/{{ workout.id }}/delete-exercise">
-                                        <i class="fa-solid fa-circle-xmark"></i>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="/exercise/{{workout.exercise_id_4}}">
-                                        {{ workout.exercise_4.name }}
-                                    </a>
-                                    <a class="btn btn-sm" href="/workout/{{ workout.id }}/delete-exercise">
-                                        <i class="fa-solid fa-circle-xmark"></i>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="/exercise/{{workout.exercise_id_5}}">
-                                        {{ workout.exercise_5.name }}
-                                    </a>
-                                    <a class="btn btn-sm" href="/workout/{{ workout.id }}/delete-exercise">
-                                        <i class="fa-solid fa-circle-xmark"></i>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="/exercise/{{workout.exercise_id_6}}">
-                                        {{ workout.exercise_6.name }}
-                                    </a>
-                                    <a class="btn btn-sm" href="/workout/{{ workout.id }}/delete-exercise">
-                                        <i class="fa-solid fa-circle-xmark"></i>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
+
+                        {% if workout.exercise_id_2 %}
+                        <ul>
+                            <li>
+                                <a href="/exercise/{{workout.exercise_id_2}}">
+                                    {{ workout.exercise_2.name }}
+                                </a>
+                            </li>
+                        </ul>
+                        {% endif %}
+
+                        {% if workout.exercise_id_3 %}
+                        <ul>
+                            <li>
+                                <a href="/exercise/{{workout.exercise_id_3}}">
+                                    {{ workout.exercise_3.name }}
+                                </a>
+                            </li>
+                        </ul>
+                        {% endif %}
+
+                        {% if workout.exercise_id_4 %}
+                        <b>{{ workout.day_2.days_of_week }}</b>
+                        <ul>
+                            <li>
+                                <a href="/exercise/{{workout.exercise_id_4}}">
+                                    {{ workout.exercise_4.name }}
+                                </a>
+                            </li>
+                        </ul>
+                        {% endif %}
+
+                        {% if workout.exercise_id_5 %}
+                        <ul>
+                            <li>
+                                <a href="/exercise/{{workout.exercise_id_5}}">
+                                    {{ workout.exercise_5.name }}
+                                </a>
+                            </li>
+                        </ul>
+                        {% endif %}
+
+                        {% if workout.exercise_id_6 %}
+                        <ul>
+                            <li>
+                                <a href="/exercise/{{workout.exercise_id_6}}">
+                                    {{ workout.exercise_6.name }}
+                                </a>
+                            </li>
+                        </ul>
+                        {% endif %}
+
+                        {% if workout.exercise_id_7 %}
+                        <b>{{ workout.day_3.days_of_week }}</b>
+                        <ul>
+                            <li>
+                                <a href="/exercise/{{workout.exercise_id_6}}">
+                                    {{ workout.exercise_7.name }}
+                                </a>
+                            </li>
+                        </ul>
+                        {% endif %}
+
+                        {% if workout.exercise_id_8 %}
+                        <ul>
+                            <li>
+                                <a href="/exercise/{{workout.exercise_id_6}}">
+                                    {{ workout.exercise_8.name }}
+                                </a>
+                            </li>
+                        </ul>
+                        {% endif %}
+
+                        {% if workout.exercise_id_9 %}
+                        <ul>
+                            <li>
+                                <a href="/exercise/{{workout.exercise_id_6}}">
+                                    {{ workout.exercise_9.name }}
+                                </a>
+                            </li>
+                        </ul>
                         {% endif %}
                     </ul>
+
+                    {% endif %}
+
+
                 </div>
             </div>
         </div>

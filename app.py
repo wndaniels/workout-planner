@@ -1,14 +1,16 @@
 from crypt import methods
 import os
+import json
 from click import edit 
 from flask import Flask, render_template, request, redirect, jsonify, session, g, flash
 from bs4 import BeautifulSoup
 from flask_bcrypt import Bcrypt
 from flask_debugtoolbar import DebugToolbarExtension
+from requests import delete, post
+from sqlalchemy import delete, func
 from sqlalchemy.exc import IntegrityError
-from werkzeug.exceptions import HTTPException
 from werkzeug.security import generate_password_hash
-from models import DaysOfWeek, Equipment, db, connect_db, User, Workout, Exercise
+from models import db, connect_db, DaysOfWeek, User, Workout, Exercise
 from forms import LoginForm, RegisterForm, EditUserFrom, UpdatePwdForm, WorkoutInfoForm, AddExercToWorkoutForm, ExerciseSearchForm
 
 CURR_USER_KEY = "curr_user"
@@ -19,18 +21,16 @@ DATABASE_URL = os.environ.get("DATABASE_URL", "postgresql:///workout_planner")
 
 app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL if DATABASE_URL in ["postgresql:///workout_planner_test", "postgresql:///workout_planner"] else DATABASE_URL.replace("://", "ql://", 1)
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.config["SQLALCHEMY_ECHO"] = True
+app.config["SQLALCHEMY_ECHO"] = False
+app.config["SECRET_KEY"] = "yupp1234"
 
 
 connect_db(app)
 
-app.config["SECRET_KEY"] = "yupp1234"
+################################################################################################################################
+### USER REGISTER/LOGIN/LOGOUT HANDlING ###
+################################################################################################################################
 
-# debug = DebugToolbarExtension(app)
-
-####
-### USER ROUTE HANDlING ###
-####
 @app.before_request
 def add_user_to_g():
     """Add user to flask's global g variable"""
@@ -86,16 +86,18 @@ def login():
     
     form = LoginForm()
 
+    
     if form.validate_on_submit():
         user = User.authenticate(form.username.data,
-                                 form.password.data)
-
+                                form.password.data)
         if user:
             do_login(user)
             flash(f"Hello, {user.username}!", "success")
             return redirect("/")
+            
 
-        flash("Invalid credentials.", 'danger')
+        flash("Email or Password are incorrect.", 'danger')
+
 
     return render_template('user/login.html', form=form)
 
@@ -115,35 +117,47 @@ def register():
     """Returns register user page, if user logged in, log out and continue to register page. """
 
     if g.user:
-        do_logout()
-        """ MAYBE PUT MODAL IN THAT SHOWS IF SOMEONE IS WANTING TO ACCESS REGISTER PAGE WHILE SIGNED IN """
+        return redirect("/")
+
+    # validate_email = User.query.filter_by(email=email).first()
+    # validate_username = User.query.filter(username).first()
 
     form = RegisterForm()
 
     if form.validate_on_submit():
-        username = form.username.data
-        password = form.password.data
-        email = form.email.data
-        first_name = form.first_name.data
-        last_name = form.last_name.data
-        new_user = User.register(username, password, email, first_name, last_name)
-
-        db.session.add(new_user)
         try:
+            username = form.username.data
+            password = form.password.data
+            email = form.email.data
+            first_name = form.first_name.data
+            last_name = form.last_name.data
+            new_user = User.register(username, password, email, first_name, last_name)
+
+            db.session.add(new_user)
             db.session.commit()
+            
         except IntegrityError:
-            form.username.errors.append(
-                "Username is not available, please pick another.")
+            db.session.rollback()
+            if User.query.filter(User.email==form.email.data).first():
+               flash("Email is unavailable.", "danger")
+            if User.query.filter(User.username == form.username.data).first():
+                flash("Username is unavailable.", "danger")
             return render_template('/user/register.html', form=form)
         
         session['username'] = new_user.username
         # Flash welcome, and redirect user to the secret page.
-        flash(f"Welcome {new_user.username}, your account has been created")
-        return redirect('/login')
+        if new_user:
+            do_login(new_user)
+            flash(f"Hello, {new_user.username}!", "success")
+            return redirect("/")
+
     else:
         return render_template('/user/register.html', form=form)
 
 
+################################################################################################################################
+### USER ROUTE HANDlING ###
+################################################################################################################################
 
 @app.route("/user/<int:user_id>", methods=["GET", "POST"])
 def user_home(user_id):
@@ -153,9 +167,7 @@ def user_home(user_id):
     
     user = User.query.get_or_404(user_id)
 
-    workout = (Workout
-                .query
-                .all())
+    workout = (Workout.query.filter(Workout.user_id == user_id).all())
 
 
     return render_template("/user/user_home.html", user=user, workout=workout )
@@ -169,29 +181,42 @@ def edit_user(user_id):
     
     user = User.query.get_or_404(user_id)
 
+    workout = (Workout.query.filter(Workout.user_id == user_id).all())
+
     form = EditUserFrom()
-
-
+ 
     if form.validate_on_submit():
-        user.first_name = form.first_name.data
-        user.last_name = form.last_name.data
-        user.email = form.email.data
-        user.username = form.username.data
-        
-        db.session.commit()
-        return redirect(f"/user/{g.user.id}")
-    
+        try:
+            user.first_name = form.first_name.data
+            user.last_name = form.last_name.data
+            user.email = form.email.data
+            user.username = form.username.data
+            
+            db.session.commit()
+            return redirect(f"/user/{g.user.id}")
+
+        except IntegrityError:
+            db.session.rollback()
+            if User.query.filter(form.username.data==g.user.username).first():
+                flash("Username is unavailable.", "danger")
+            elif User.query.filter(form.email.data==g.user.email).first():
+                flash("Email is unavailable.", "danger")
+            return redirect(f"/user/{g.user.id}/edit")
+
     elif request.method == "GET":
         form.first_name.data = user.first_name
         form.last_name.data = user.last_name
         form.email.data = user.email
         form.username.data = user.username
 
-    return render_template("/user/edit_user.html", user=user, form=form)
+
+
+    return render_template("/user/edit_user.html", user=user, workout=workout, form=form)
 
 
 @app.route('/user/<int:user_id>/password/change', methods=["GET", "POST"])
 def update_password(user_id):
+    """Form allowing user to chagne password. First confirming current password and then resetting password"""
     if not g.user:
         return redirect("/login")
     
@@ -209,28 +234,37 @@ def update_password(user_id):
 
 
 
-@app.route('/user/delete', methods=["POST"])
-def delete_user():
+@app.route('/user/<int:user_id>/delete', methods=["GET","POST"])
+def delete_user(user_id):
     """Delete user."""
 
     if not g.user:
-        flash("Access unauthorized.", "danger")
         return redirect("/")
+    
+    user = User.query.get_or_404(user_id)
+    workout = (Workout.query.filter(Workout.user_id == user_id).all())
 
     do_logout()
 
-    db.session.delete(g.user)
+    for workout in workout:
+        if workout.user_id == user.id:
+            db.session.delete(workout)
+
+    db.session.delete(user)
     db.session.commit()
 
-    return redirect("/login")
+    return redirect("/")
 
 
 
-####
+
+################################################################################################################################
 ### WORKOUT ROUTE HANDlING ###
-####
-@app.route("/workout/<int:workout_id>", methods=["GET","POST"])
+################################################################################################################################
+
+@app.route("/workout/<int:workout_id>")
 def workout_show(workout_id):
+    """Returns page of workout title and description if user has """
 
     if not g.user:
         return redirect("/")
@@ -266,7 +300,7 @@ def create_workout():
 @app.route("/workout/<int:workout_id>/edit", methods=["GET", "POST"])
 def edit_workout(workout_id):
     """Allows user to edit their workout title and description, as well as add workouts to 
-        specific days of week, and delete """
+        specific days of week, and delete"""
     if not g.user:
         return redirect("/")
 
@@ -291,6 +325,7 @@ def edit_workout(workout_id):
 
 @app.route("/workout/<int:workout_id>/add-exercise", methods=["GET", "POST"])
 def add_exercise(workout_id):
+    """Form allowing multiple exercises to be added to users workout."""
     if not g.user:
         return redirect("/")
 
@@ -299,39 +334,43 @@ def add_exercise(workout_id):
     form = AddExercToWorkoutForm()
 
     if form.validate_on_submit():
-        workout.days = form.day_of_week.data
-        workout.exercise_1 = form.exercise_id.data
+        workout.day_1 = form.day_id_1.data
+        workout.day_2 = form.day_id_2.data
+        workout.day_3 = form.day_id_3.data
+        workout.exercise_1 = form.exercise_id_1.data
+        workout.exercise_2 = form.exercise_id_2.data
+        workout.exercise_3 = form.exercise_id_3.data
+        workout.exercise_4 = form.exercise_id_4.data
+        workout.exercise_5 = form.exercise_id_5.data
+        workout.exercise_6 = form.exercise_id_6.data
+        workout.exercise_7 = form.exercise_id_7.data
+        workout.exercise_8 = form.exercise_id_8.data
+        workout.exercise_9 = form.exercise_id_9.data
         
         db.session.commit()
         return redirect(f"/user/{g.user.id}")
     
-    # elif request.method == "GET":
-    #     form.day_of_week.data = DaysOfWeek.query.filter_by(id=workout.days_id).first()
-    #     form.exercise_id.data = Exercise.query.filter_by(id=workout.exercise_id).first()
+    elif request.method == "GET":
+        form.day_id_1.data = DaysOfWeek.query.filter_by(id=workout.days_id_1).first()
+        form.day_id_2.data = DaysOfWeek.query.filter_by(id=workout.days_id_2).first()
+        form.day_id_3.data = DaysOfWeek.query.filter_by(id=workout.days_id_3).first()
+        form.exercise_id_1.data = Exercise.query.filter_by(id=workout.exercise_id_1).first()
+        form.exercise_id_2.data = Exercise.query.filter_by(id=workout.exercise_id_2).first()
+        form.exercise_id_3.data = Exercise.query.filter_by(id=workout.exercise_id_3).first()
+        form.exercise_id_4.data = Exercise.query.filter_by(id=workout.exercise_id_4).first()
+        form.exercise_id_5.data = Exercise.query.filter_by(id=workout.exercise_id_5).first()
+        form.exercise_id_6.data = Exercise.query.filter_by(id=workout.exercise_id_6).first()
+        form.exercise_id_7.data = Exercise.query.filter_by(id=workout.exercise_id_7).first()
+        form.exercise_id_8.data = Exercise.query.filter_by(id=workout.exercise_id_8).first()
+        form.exercise_id_9.data = Exercise.query.filter_by(id=workout.exercise_id_9).first()
     
 
     return render_template("workout/manual_exerc_add.html", form=form, workout=workout)
 
 
-@app.route("/workout/<int:workout_id>/delete-exercise")
-def delete_exercise(workout_id):
-    if not g.user:
-        return redirect("/")
-    
-    workout = Workout.query.get_or_404(workout_id)
-    exercise_id = Exercise.query.filter_by(id=workout.exercise_id).first()
-    equipment_id = Equipment.query.filter_by(id=workout.equipment_id).first()
-
-    db.session.delete(exercise_id)
-    db.session.delete(equipment_id)
-    db.session.commit()
-
-    return redirect(f"/user/{g.user.id}")
-
-
 @app.route("/workout/<int:workout_id>/delete", methods=["GET","POST"])
 def delete_workout(workout_id):
-
+    """Delete current workout"""
     if not g.user:
         return redirect("/")
 
@@ -344,9 +383,35 @@ def delete_workout(workout_id):
 
 
 
-####
+################################################################################################################################
 ### EXERCISE ROUTE HANDlING ###
-####
+################################################################################################################################
+
+@app.context_processor
+def base():
+    """Pass Data to NavBar"""
+    form = ExerciseSearchForm()
+    return dict(form=form)
+
+
+@app.route("/search", methods=["POST"])
+def exercise_search():
+    form = ExerciseSearchForm()
+
+    exerc = Exercise.query
+
+    if form.validate_on_submit():
+        # Get data from submitted form
+        searched = form.searched.data
+
+        # Query the Database
+        exerc = exerc.filter_by(Exercise.name.ilike('%' + searched + '%'))
+        exerc = exerc.order_by(Exercise.id).all()
+
+        return render_template("exercise/exercise_search.html", form=form, searched=searched, exerc=exerc)
+
+    return render_template("exercise/exercise_search.html")
+
 
 @app.route("/exercise/<int:exercise_id>", methods=["GET"])
 def exercise_show(exercise_id):
@@ -359,15 +424,22 @@ def exercise_show(exercise_id):
 
 
 
-####
+################################################################################################################################
 ### ERROR ROUTE HANDlING ###
-####
+################################################################################################################################
 
-@app.errorhandler(HTTPException)
-def handle_exception(e):
-    """Renders error page if URL not found, or if there is a server error."""
+@app.errorhandler(404)
+def page_not_found(e):
+    """404 NOT FOUND page."""
 
-    if isinstance(e, HTTPException):
-        return render_template("error.html", error=e, title="Something went wrong.")
-    else:
-        return render_template("error.html", error=e, title="Something went wrong."), 500
+    return render_template('404.html'), 404
+
+@app.after_request
+def add_header(req):
+    """Add non-caching headers on every request."""
+
+    req.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    req.headers["Pragma"] = "no-cache"
+    req.headers["Expires"] = "0"
+    req.headers['Cache-Control'] = 'public, max-age=0'
+    return req
