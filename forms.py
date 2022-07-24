@@ -13,32 +13,34 @@ from wtforms.validators import InputRequired, Optional, EqualTo, DataRequired, E
 from models import days_query, excer_query, User
 
 
+################################################################################################################################
+### CUSTOMER FORM VALIDATION ###
+################################################################################################################################
 
 def validate_firstName(form, field):
-    if not field.raw_data or not field.raw_data[0]:
+    if not field.raw_data or not field.raw_data[0]: # Validate firt name has been entered
         raise ValidationError('First name is required')
 
 def validate_email(form, field):
-    if not field.raw_data or not field.raw_data[0]:
+    if not field.raw_data or not field.raw_data[0]: # Validate email has been entered
         raise ValidationError('Valid email is required')
-    if User.query.filter(User.email==field.data).first():
+    if User.query.filter(User.email==field.data).first(): # Validate email entered is unused and available
         raise ValidationError('Email is unavailable')
-
-# def validate_email_update(form, field):
-#     if User.query.filter(field.data==current_user.email).first():
-#         return
             
 def validate_username(form, field):
-    if not field.raw_data or not field.raw_data[0]:
+    if not field.raw_data or not field.raw_data[0]: # Validate username has been entered
         raise ValidationError('Username is required')
-    if User.query.filter(User.username == field.data).first():
+    if User.query.filter(User.username == field.data).first(): # Validate username entered is unused and available
         raise ValidationError('Username is unavailable')
 
 def validate_password (form, field):
-    if not field.raw_data or not field.raw_data[0]:
+    if not field.raw_data or not field.raw_data[0]: # Validate password has been entered
         raise ValidationError('Password is required')
 
    
+################################################################################################################################
+### Forms ###
+################################################################################################################################
 
 class LoginForm(FlaskForm):
     """Login Form"""
@@ -52,7 +54,6 @@ class LoginForm(FlaskForm):
         "Password", 
         validators=[InputRequired()]
     )
-
 
 
 class RegisterForm(FlaskForm):
@@ -104,7 +105,7 @@ class EditUserFrom(FlaskForm):
 
     email = EmailField(
         "Email *", 
-        validators=[InputRequired(), Email()]
+        validators=[InputRequired()]
     )
 
     username = StringField(
@@ -130,6 +131,7 @@ class UpdatePwdForm(FlaskForm):
         "Confirm New Password",
         validators=[InputRequired()]
     )
+
 
 class WorkoutInfoForm(FlaskForm):
     """Create Workout Template"""
@@ -255,6 +257,7 @@ class AddExercToWorkoutForm(FlaskForm):
         get_label='name',
         validators=[InputRequired()]
     )
+
 
 class ExerciseSearchForm(FlaskForm):
     searched = StringField("Searched", validators=[DataRequired()])
