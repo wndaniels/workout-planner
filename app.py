@@ -197,10 +197,14 @@ def edit_user(user_id):
 
         except IntegrityError:
             db.session.rollback()
-            if User.query.filter(form.username.data==g.user.username).first():
+            if User.query.filter(form.username.data!=g.user.username).first():
                 flash("Username is unavailable.", "danger")
-            elif User.query.filter(form.email.data==g.user.email).first():
+            elif User.query.filter(form.email.data!=g.user.email).first():
                 flash("Email is unavailable.", "danger")
+            elif User.query.filter(form.username.data==g.user.username).first():
+                return
+            elif User.query.filter(form.email.data==g.user.email).first():
+                return
             return redirect(f"/user/{g.user.id}/edit")
 
     elif request.method == "GET":
