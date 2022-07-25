@@ -16,7 +16,7 @@ Edit User
                 {% for field in form if field.widget.input_type != 'hidden' %}
                 <p>
                     {{ field.label }}
-                    {{ field (class_="form-control", novalidate=True) }}
+                    {{ field (class_="form-control") }}
 
                     {% for error in field.errors %}
                     <span class="form-text text-danger">

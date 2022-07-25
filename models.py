@@ -69,11 +69,14 @@ class User(db.Model):
     
     @classmethod
     def register(cls, username, pwd, email, first_name, last_name):
-        username = username
+        if username is not None:
+            username = username.lower()
+        else:
+            return None
         hashed = bcrypt.generate_password_hash(pwd, rounds=12)
         hashed_utf8 = hashed.decode("utf8")
 
-        user = cls(username=username.lower(), password=hashed_utf8, email=email.lower(), first_name=first_name, last_name=last_name)
+        user = cls(username=username, password=hashed_utf8, email=email.lower(), first_name=first_name, last_name=last_name)
         submit_data(user)
 
         return user
