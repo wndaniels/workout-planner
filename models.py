@@ -4,6 +4,7 @@ from math import sqrt
 from turtle import back
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy import ForeignKey, Unicode, null, func
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.orm import backref
@@ -69,14 +70,20 @@ class User(db.Model):
     
     @classmethod
     def register(cls, username, pwd, email, first_name, last_name):
+
         if username is not None:
             username = username.lower()
-        else:
-            return None
+
+
+        if email is not None:
+            email = email.lower()
+        
+
+            
         hashed = bcrypt.generate_password_hash(pwd, rounds=12)
         hashed_utf8 = hashed.decode("utf8")
 
-        user = cls(username=username, password=hashed_utf8, email=email.lower(), first_name=first_name, last_name=last_name)
+        user = cls(username=username, password=hashed_utf8, email=email, first_name=first_name, last_name=last_name)
         submit_data(user)
 
         return user
@@ -92,18 +99,18 @@ class User(db.Model):
             return False
             
     
-    @classmethod
-    def check_username(cls, username) -> bool:
-        return cls.query.filter_by(username=username.lower()).one_or_none()
+    # @classmethod
+    # def check_username(cls, username) -> bool:
+    #     return cls.query.filter_by(username=username.lower()).one_or_none()
 
-    def serialize(self):
-        return {
-            "id": self.id,
-            "first_name": self.first_name,
-            "last_name": self.last_name,
-            "email": self.email,
-            "username": self.username
-        }
+    # def serialize(self):
+    #     return {
+    #         "id": self.id,
+    #         "first_name": self.first_name,
+    #         "last_name": self.last_name,
+    #         "email": self.email,
+    #         "username": self.username
+    #     }
 
 
 ################################################################################################################################
