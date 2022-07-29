@@ -13,9 +13,10 @@ The current version of the application is proof of concept and has the ability t
   - Login and registration handled on serverside with use of Flask and WTForms.
 
 ## Getting Start:
-- Firstly, clone the Workout Planner repository.
+- Firstly, ensure correct version of Python is installed. `python-3.9.10 or later`
+- Clone the Workout Planner repository. 
 - Once all files are downloaded, create a virtual environment. `python3 -m venv venv`
-- Install PostgreSQL. `https://www.postgresql.org/download/`
+- Install PostgreSQL. [https://www.postgresql.org/download/](https://www.postgresql.org/download/)
 - Install all required dependencies `pip install requirments.txt`
 - Create db and schema `psql < schema.sql`
 - Seed db from API `python seed.py`
@@ -30,10 +31,12 @@ The current version of the application is proof of concept and has the ability t
 - PostgreSQL
 
 ### Libraries/Tools:
-- Bcrypt
-- Flask
-- Flask-DebugToolbar
-- Jinja2
-- SQLAlchemy
-- Unittest
-- WTForms
+- Bcrypt - [https://pypi.org/project/bcrypt/](https://pypi.org/project/bcrypt/)
+- Beautiful Soup - [https://www.crummy.com/software/BeautifulSoup/bs4/doc/](https://www.crummy.com/software/BeautifulSoup/bs4/doc/)
+- Bootstrap - [https://getbootstrap.com/docs/5.2/getting-started/introduction/](https://getbootstrap.com/docs/5.2/getting-started/introduction/)
+- Flask - [https://flask.palletsprojects.com/en/2.1.x/](https://flask.palletsprojects.com/en/2.1.x/)
+- Flask-DebugToolbar - [https://flask-debugtoolbar.readthedocs.io/en/latest/](https://flask-debugtoolbar.readthedocs.io/en/latest/)
+- Jinja2 - [https://jinja.palletsprojects.com/en/3.1.x/](https://jinja.palletsprojects.com/en/3.1.x/)
+- SQLAlchemy - [https://docs.sqlalchemy.org/en/14/](https://docs.sqlalchemy.org/en/14/)
+- Unittest - [https://docs.python.org/3/library/unittest.html](https://docs.python.org/3/library/unittest.html)
+- WTForms - [https://wtforms.readthedocs.io/en/3.0.x/](https://wtforms.readthedocs.io/en/3.0.x/)
