@@ -33,14 +33,6 @@
             <ul class="nav justify-content-end">
                 {% if request.endpoint != None %}
                 {% endif %}
-                {% if not g.user %}
-                <li class="nav-item">
-                    <a class="nav-link" href="/login">Log in</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/register">Create Account</a>
-                </li>
-                {% else %}
                 <li class="nav-item"></li>
                 <form method="POST" class="d-flex" action="/search">
                     {{ form.hidden_tag() }}
@@ -50,6 +42,14 @@
                         <span class="fa fa-search"></span>
                     </button>
                 </form>
+                {% if not g.user %}
+                <li class="nav-item">
+                    <a class="nav-link" href="/login">Log in</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/register">Create Account</a>
+                </li>
+                {% else %}
                 {% if g.user.workouts %}
                 <a class="nav-link" href="/">Home</a>
                 {% else %}
