@@ -1,9 +1,7 @@
 from crypt import methods
 import os
-import json
 from click import edit 
 from flask import Flask, render_template, request, redirect, jsonify, session, g, flash
-from bs4 import BeautifulSoup
 from flask_bcrypt import Bcrypt
 from flask_debugtoolbar import DebugToolbarExtension
 from requests import delete, post
@@ -17,15 +15,17 @@ CURR_USER_KEY = "curr_user"
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
 
-DATABASE_URL = os.environ.get("DATABASE_URL", "postgresql:///workout_planner")
+app.config['SQLALCHEMY_DATABASE_URI'] = (os.environ.get("DATABASE_URL", "postgresql:///workout_planner"))
 
-app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL if DATABASE_URL in ["postgresql:///workout_planner_test", "postgresql:///workout_planner"] else DATABASE_URL.replace("://", "ql://", 1)
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SQLALCHEMY_ECHO"] = False
+app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 app.config["SECRET_KEY"] = "yupp1234"
+toolbar = DebugToolbarExtension(app)
 
 
 connect_db(app)
+db.create_all()
 
 ################################################################################################################################
 ### USER REGISTER/LOGIN/LOGOUT HANDlING ###
@@ -56,18 +56,9 @@ def do_logout():
         del session[CURR_USER_KEY]
 
 
-
 @app.route("/", methods=["GET", "POST"])
-def base():
-    """Base redirects to home page"""
-
-    return redirect("/home")
-
-
-
-@app.route("/home", methods=["GET", "POST"])
 def home():
-    """ Returns home page, if user logged in will redirect to users home page """
+    """Base redirects to login page if user is not logged in"""
     if g.user:
         return redirect(f"/user/{g.user.id}")
     
@@ -409,7 +400,7 @@ def exercise_search():
         searched = form.searched.data
 
         # Query the Database
-        exerc = exerc.filter_by(Exercise.name.ilike('%' + searched + '%'))
+        exerc = exerc.filter(Exercise.name.ilike('%' + searched + '%'))
         exerc = exerc.order_by(Exercise.id).all()
 
         return render_template("exercise/exercise_search.html", form=form, searched=searched, exerc=exerc)
