@@ -8,7 +8,7 @@ Add Exercise
 
 <div class="row justify-content-md-center">
     <div class="col-md-4">
-        <form method="POST">
+        <form class="add-exerc-form" method="POST">
             {{ form.hidden_tag() }}
 
             {% for field in form if field.widget.input_type != 'hidden' %}

@@ -9,7 +9,7 @@ Edit User
 <div class="row justify-content-md-center">
     <div class="col-md-4">
         <div>
-            <form method="POST">
+            <form class="edit-user-form" method="POST">
 
                 {{ form.hidden_tag() }}
 
@@ -34,7 +34,7 @@ Edit User
             </form>
             <div>
                 {% if g.user.id == user.id %}
-                <form method="POST" action="/user/{{ g.user.id }}/delete">
+                <form class="delete-user-form" method="POST" action="/user/{{ g.user.id }}/delete">
                     <button class="btn btn-sm btn-outline-danger"><em>Delete Profile</em></button>
                 </form>
                 {% endif %}

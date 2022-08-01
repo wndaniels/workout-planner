@@ -27,9 +27,9 @@ toolbar = DebugToolbarExtension(app)
 connect_db(app)
 db.create_all()
 
-################################################################################################################################
+###########################################################################################
 ### USER REGISTER/LOGIN/LOGOUT HANDlING ###
-################################################################################################################################
+###########################################################################################
 
 @app.before_request
 def add_user_to_g():
@@ -56,7 +56,14 @@ def do_logout():
         del session[CURR_USER_KEY]
 
 
-@app.route("/", methods=["GET", "POST"])
+@app.route("/", methods=["GET"])
+def base():
+    """Base redirects to login page if user is not logged in"""
+
+    return redirect("/home")
+
+
+@app.route("/home", methods=["GET"])
 def home():
     """Base redirects to login page if user is not logged in"""
     if g.user:
@@ -64,8 +71,7 @@ def home():
     
     """ MAYBE PUT A TIMED MODAL THAT SHOWS UP FOR USER TO LOGIN """
 
-    return redirect("/login")
-
+    return render_template("anon_home.html")
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -73,7 +79,7 @@ def login():
     """User Login Route, if user logged in, redirect to user home. """
 
     if g.user:
-        return redirect("/")
+        return redirect(f"/user/{g.user.id}")
     
     form = LoginForm()
 
@@ -108,7 +114,7 @@ def register():
     """Returns register user page, if user logged in, log out and continue to register page. """
 
     if g.user:
-        return redirect("/")
+        return redirect(f"/user/{g.user.id}")
 
     # validate_email = User.query.filter_by(email=email).first()
     # validate_username = User.query.filter(username).first()
@@ -146,14 +152,15 @@ def register():
         return render_template('/user/register.html', form=form)
 
 
-################################################################################################################################
+###########################################################################################
 ### USER ROUTE HANDlING ###
-################################################################################################################################
+###########################################################################################
 
 @app.route("/user/<int:user_id>", methods=["GET", "POST"])
 def user_home(user_id):
     """Returns Users home page, if user not logged in will redirect to login page."""
     if not g.user:
+        flash("Unauthorized access, please login", "danger")
         return redirect("/")
     
     user = User.query.get_or_404(user_id)
@@ -168,7 +175,8 @@ def user_home(user_id):
 def edit_user(user_id):
     """ Returns Edit User page, if user not logged in, will redirect to login page."""
     if not g.user:
-        return redirect("/login")
+        flash("Unauthorized access, please login", "danger")
+        return redirect("/")
     
     user = User.query.get_or_404(user_id)
 
@@ -213,7 +221,8 @@ def edit_user(user_id):
 def update_password(user_id):
     """Form allowing user to chagne password. First confirming current password and then resetting password"""
     if not g.user:
-        return redirect("/login")
+        flash("Unauthorized access, please login", "danger")
+        return redirect("/")
     
     user = User.query.get_or_404(user_id)
 
@@ -234,6 +243,7 @@ def delete_user(user_id):
     """Delete user."""
 
     if not g.user:
+        flash("Unauthorized access, please login", "danger")
         return redirect("/")
     
     user = User.query.get_or_404(user_id)
@@ -253,15 +263,16 @@ def delete_user(user_id):
 
 
 
-################################################################################################################################
+###########################################################################################
 ### WORKOUT ROUTE HANDlING ###
-################################################################################################################################
+###########################################################################################
 
 @app.route("/workout/<int:workout_id>")
 def workout_show(workout_id):
     """Returns page of workout title and description if user has """
 
     if not g.user:
+        flash("Unauthorized access, please login", "danger")
         return redirect("/")
     
     workout = Workout.query.get_or_404(workout_id)
@@ -274,7 +285,8 @@ def create_workout():
     """Returns Create Workout page, if User not logged in, redirects to login page"""
  
     if not g.user:
-        return redirect("/login")
+        flash("Unauthorized access, please login", "danger")
+        return redirect("/")
     
     if g.user.workouts:
         return redirect(f"/user/{g.user.id}")
@@ -297,6 +309,7 @@ def edit_workout(workout_id):
     """Allows user to edit their workout title and description, as well as add workouts to 
         specific days of week, and delete"""
     if not g.user:
+        flash("Unauthorized access, please login", "danger")
         return redirect("/")
 
     workout = Workout.query.get_or_404(workout_id)
@@ -322,6 +335,7 @@ def edit_workout(workout_id):
 def add_exercise(workout_id):
     """Form allowing multiple exercises to be added to users workout."""
     if not g.user:
+        flash("Unauthorized access, please login", "danger")
         return redirect("/")
 
     workout = Workout.query.get_or_404(workout_id)
@@ -367,6 +381,7 @@ def add_exercise(workout_id):
 def delete_workout(workout_id):
     """Delete current workout"""
     if not g.user:
+        flash("Unauthorized access, please login", "danger")
         return redirect("/")
 
     workout = Workout.query.get_or_404(workout_id)
@@ -378,9 +393,9 @@ def delete_workout(workout_id):
 
 
 
-################################################################################################################################
+###########################################################################################
 ### EXERCISE ROUTE HANDlING ###
-################################################################################################################################
+###########################################################################################
 
 @app.context_processor
 def base():
@@ -419,15 +434,15 @@ def exercise_show(exercise_id):
 
 
 
-################################################################################################################################
+###########################################################################################
 ### ERROR ROUTE HANDlING ###
-################################################################################################################################
+###########################################################################################
 
 @app.errorhandler(404)
 def page_not_found(e):
     """404 NOT FOUND page."""
 
-    return render_template('404.html'), 404
+    return render_template('error/404.html'), 404
 
 @app.after_request
 def add_header(req):
