@@ -1,22 +1,23 @@
 import os
 from unittest import TestCase
 from sqlalchemy import exc
+from sqlalchemy.exc import IntegrityError
 from models import db, User, DaysOfWeek, Equipment, Exercise, Workout
 
 
 os.environ['DATABASE_URL'] = "postgresql:///workout_planner_test"
 from app import app
 
-
-db.drop_all()
 db.create_all()
 
 class UserModelTestCase(TestCase):
     """Test case for User model class"""
 
+
     def setUp(self):
         """Create test client and sample data"""
-
+        
+        db.session.close()
         db.drop_all()
         db.create_all()
 
@@ -62,9 +63,9 @@ class UserModelTestCase(TestCase):
         db.session.commit()
 
 
-################################################################################################################################
+###########################################################################################
 ### TEST REGISTRAION CLASSMETHOD ###
-################################################################################################################################
+###########################################################################################
 
     def test_user_register(self):
         """Test User classmethod REGISTER."""
@@ -96,30 +97,53 @@ class UserModelTestCase(TestCase):
     
 
     def test_invalid_username_registration(self):
-        """Test for invalidity of username """ 
-
-        username=None
-
-        invalid_username = User.register(username, "test@gmail.com", "yupp1234", "Test", "Tester")
-        uid = 12345
-        invalid_username.id = uid
-        with self.assertRaises(exc.IntegrityError) as context:
+        """ Test for invalidity of username """ 
+        try: 
+            invalid_username = User.register(None, "password", "test@gmail.com", "Test", "Tester")
+            u_id = 12345
+            invalid_username.id = u_id
             db.session.commit()
+        except IntegrityError:
+            db.session.rollback()
+            
+
+    def test_unavailable_username_registration(self):
+        """ Test for availability of username """
+        try: 
+            invalid_username = User.register("frankyfrank", "password", "test@gmail.com", "Test", "Tester")
+            u_id = 2468
+            invalid_username.id = u_id
+            db.session.commit()
+        except IntegrityError:
+            return
+            db.session.rollback()
 
 
-    # def test_user_authenticate(self):
-    #     """Test User classmethod AUTHENTICATE """
+###########################################################################################
+### TEST AUTHENTICATION CLASSMETHOD ###
+###########################################################################################
 
-    #     self.assertTrue(User.authenticate("frankyfrank", "yupp1234"))
-    #     self.assertTrue(User.authenticate("fRaNkYfRaNk", "yupp1234"))
-    #     self.assertFalse(User.authenticate("frankyfrankyyy", "yupp1234"))
-    #     self.assertFalse(User.authenticate("frankyfrankyyy", "yupp34"))
+    def test_user_authenticate(self):
+        """Test User classmethod AUTHENTICATE """
+
+        user1 = User.authenticate(self.u1.username, "yupp1234")
+        self.assertIsNotNone(user1)
+        self.assertEqual(user1.id, self.u1_id)
+
+        user2 = User.authenticate(self.u2.username, "yupp1234")
+        self.assertIsNotNone(user2)
+        self.assertEqual(user2.id, self.u2_id)
+
+        self.assertNotEqual(user1.id, self.u2_id)
     
+    def test_username_case_insensitive(self):
+        self.assertTrue(User.authenticate("frankyfrank", "yupp1234"))
+        self.assertTrue(User.authenticate("fRaNkYfRaNk", "yupp1234"))
+        self.assertTrue(User.authenticate("billybill", "yupp1234"))
+        self.assertTrue(User.authenticate("bIlLyBiLl", "yupp1234"))
 
-    # def test_user_check_username(self):
-    #     """Test User classmethod CHECK_USERNAME"""
-
-    #     self.assertTrue(User.check_username("frankyfrank"))
-    #     self.assertTrue(User.check_username("fRaNkYfRaNk"))
-    #     self.assertFalse(User.check_username("frankyfrankyyy"))
+    def test_incorrect_password(self):
+        self.assertFalse(User.authenticate("frankyfrank", "yupp123456789"))
+        self.assertFalse(User.authenticate("billybill", "yupp34"))
+    
 
