@@ -174,37 +174,6 @@ class UserViewsTestCase(TestCase):
             self.assertEqual(res.status_code, 302)
 
 
-    def test_create_workout_logged_out(self):
-        """Test Creating Workout when not signed in"""
-        with self.client as c:
-            res = c.get("/workout/create")
-        
-            self.assertEqual(res.status_code, 302)
-
-
-    def test_create_workout_logged_in(self):
-        """Test Creating Workout When Signed In"""
-        with self.client as c:
-            with c.session_transaction() as sess:
-                sess[CURR_USER_KEY] = self.testuser.id
-
-            res = c.get("/workout/create")
-            soup = BeautifulSoup(str(res.data), "html.parser")
-            create_workout_form = soup.find_all("form", class_="create-workout-form")
-        
-            self.assertEqual(res.status_code, 200)
-            self.assertEqual(len(create_workout_form), 1)
-
-
-    def test_save_workout_logged_out(self):
-        """Test Save Workout When Not Signed In"""
-        with self.client as c:
-            res = c.get(f"/user/{self.testuser_id}")
-
-            self.assertEqual(res.status_code, 302)
-
-
-
     def test_access_undefined_route(self):
         """Test Attempt to access an undefined route """
         with app.test_client() as c:
