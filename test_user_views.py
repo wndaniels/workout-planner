@@ -1,13 +1,17 @@
 from cgitb import html
+from email import message
 import os
 from unittest import TestCase
+from urllib import response
+from urllib.parse import urlparse
 from bs4 import BeautifulSoup
-from flask import url_for
+from flask import redirect, url_for, request
 from models import db, User, DaysOfWeek, Equipment, Exercise, Workout
 
 os.environ['DATABASE_URL'] = "postgresql:///workout_planner_test"
 from app import app, CURR_USER_KEY
 
+db.drop_all()
 db.create_all()
 
 app.config['WTF_CSRF_ENABLED'] = False
@@ -33,6 +37,14 @@ class UserViewsTestCase(TestCase):
         self.testuser_id = 1234
         self.testuser.id = self.testuser_id
 
+        self.testworkout = Workout(
+            title = "Test Title",
+            description = "Test Description"
+        )
+
+        self.testworkout_id = 1234
+        self.testworkout.id = self.testworkout_id
+
         db.session.commit()
 
 
@@ -45,7 +57,6 @@ class UserViewsTestCase(TestCase):
 
     def test_home_logged_out(self):
         """Test Home Page View Logged Out"""
-
         with self.client as c:
             res = c.get("/home")
             html = res.get_data(as_text=True)
@@ -59,46 +70,31 @@ class UserViewsTestCase(TestCase):
 
     def test_home_logged_in(self):
         """Test Home Page View Logged In"""
-
         with self.client as c:
             with c.session_transaction() as sess:
                 sess[CURR_USER_KEY] = self.testuser.id
 
             res = c.get(f"/user/{self.testuser_id}")
-            html = res.get_data(as_text=True)
             soup = BeautifulSoup(str(res.data), "html.parser")
             drpdwn_found = soup.find_all("li", class_="nav-item dropdown")
 
             self.assertEqual(res.status_code, 200)
             self.assertEqual(len(drpdwn_found), 1)
 
-            self.assertIn("testytest", str(res.data))
-            self.assertIn("Log out", html)
-            self.assertNotIn("Log in", html)
-            self.assertNotIn("Register", html)
-
 
     def test_register_view(self):
         """Test Register Page View"""
-
         with self.client as c:
             res = c.get("/register")
-            html = res.get_data(as_text=True)
             soup = BeautifulSoup(str(res.data), "html.parser")
             register_form = soup.find_all("form", class_="register-form")
 
             self.assertEqual(res.status_code, 200)
             self.assertEqual(len(register_form), 1)
-            
-            self.assertIn("First Name", html)
-            self.assertIn("Register User", html)
-            self.assertIn("register-form", html)
-            self.assertNotIn("login-form", html)
 
 
     def test_register_user(self):
         """Test User Registration"""
-
         with app.test_client() as c:
             with c.session_transaction() as sess:
                 sess[CURR_USER_KEY] = self.testuser.id
@@ -110,25 +106,17 @@ class UserViewsTestCase(TestCase):
 
     def test_login_page_view(self):
         """Test Login Page View"""
-
         with self.client as c:
             res = c.get("/login")
-            html = res.get_data(as_text=True)
             soup = BeautifulSoup(str(res.data), "html.parser")
             login_form = soup.find_all("form", class_="login-form")
 
             self.assertEqual(res.status_code, 200)
             self.assertEqual(len(login_form), 1)
 
-            self.assertIn("Username", html)
-            self.assertIn("Password", html)
-            self.assertIn("login-form", html)
-            self.assertNotIn("register-form", html)
-
 
     def test_login_user(self):
         """Test User Login"""
-
         with app.test_client() as c:
             with c.session_transaction() as sess:
                 sess[CURR_USER_KEY] = self.testuser.id
@@ -140,7 +128,6 @@ class UserViewsTestCase(TestCase):
 
     def test_edit_user_logged_out(self):
         """Test Edit User Page View when not signed in"""
-
         with self.client as c:
 
             res = c.get(f"/user/{self.testuser_id}/edit")
@@ -153,13 +140,11 @@ class UserViewsTestCase(TestCase):
 
     def test_edit_user_logged_in(self):
         """Test Edit User Page View when signed in"""
-
         with self.client as c:
             with c.session_transaction() as sess:
                 sess[CURR_USER_KEY] = self.testuser.id
             
             res = c.get(f"/user/{self.testuser_id}/edit")
-            html = res.get_data(as_text=True)
             soup = BeautifulSoup(str(res.data), "html.parser")
             edit_form = soup.find_all("form", class_="edit-user-form")
             delete_user_form = soup.find_all("form", class_="delete-user-form")
@@ -167,25 +152,61 @@ class UserViewsTestCase(TestCase):
             self.assertEqual(res.status_code, 200)
             self.assertEqual(len(edit_form), 1)
             self.assertEqual(len(delete_user_form), 1)
-            self.assertIn("Title", html)
 
 
     def test_delete_user_logged_out(self):
-        """Test Deleting User when not signed in"""
-
+        """Test Deleting User When Not Signed In"""
         with self.client as c:
+            res = c.get(f"/user/{self.testuser_id}/delete")
+        
+            self.assertEqual(res.status_code, 302)
+
+
+
+    def test_delete_user_logged_in(self):
+        """Test Deleting User When Signed In"""
+        with self.client as c:
+            with c.session_transaction() as sess:
+                sess[CURR_USER_KEY] = self.testuser.id
+
             res = c.get(f"/user/{self.testuser_id}/delete")
 
             self.assertEqual(res.status_code, 302)
 
 
-    # def test_create_workout_logged_out(self):
-    #     """Test Creating Workout when not signed in"""
+    def test_create_workout_logged_out(self):
+        """Test Creating Workout when not signed in"""
+        with self.client as c:
+            res = c.get("/workout/create")
+        
+            self.assertEqual(res.status_code, 302)
+
+
+    def test_create_workout_logged_in(self):
+        """Test Creating Workout When Signed In"""
+        with self.client as c:
+            with c.session_transaction() as sess:
+                sess[CURR_USER_KEY] = self.testuser.id
+
+            res = c.get("/workout/create")
+            soup = BeautifulSoup(str(res.data), "html.parser")
+            create_workout_form = soup.find_all("form", class_="create-workout-form")
+        
+            self.assertEqual(res.status_code, 200)
+            self.assertEqual(len(create_workout_form), 1)
+
+
+    def test_save_workout_logged_out(self):
+        """Test Save Workout When Not Signed In"""
+        with self.client as c:
+            res = c.get(f"/user/{self.testuser_id}")
+
+            self.assertEqual(res.status_code, 302)
+
 
 
     def test_access_undefined_route(self):
         """Test Attempt to access an undefined route """
-
         with app.test_client() as c:
             with c.session_transaction() as sess:
                 sess[CURR_USER_KEY] = self.testuser.id
