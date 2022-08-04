@@ -9,7 +9,7 @@ db.create_all()
 
 
 #####
-# Pull Days of Week data from API
+# Seed Days of Week data from API into db
 #####
 days_data = requests.get("https://wger.de/api/v2/daysofweek/?format=json").json()
 days_of_week = [DaysOfWeek(days_of_week=days["day_of_week"]) for days in days_data["results"]]
@@ -18,7 +18,7 @@ db.session.add_all(days_of_week)
 db.session.commit()
 
 #####
-# Pull Equipment data from API
+# Seed Equipment data from API into db
 #####
 newEquipData = []
 equip_data = requests.get("https://wger.de/api/v2/equipment/?format=json").json()
@@ -29,7 +29,7 @@ db.session.add_all(newEquipData)
 db.session.commit()
 
 #####
-# Pull Excercise data from API
+# Seed Excercise data from API into db
 #####
 newExercData = []
 exerc_data = requests.get("https://wger.de/api/v2/exercise/?format=json&limit=231&language=2").json()

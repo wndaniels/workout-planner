@@ -22,9 +22,9 @@ def connect_db(app):
     db.app = app
     db.init_app(app)
 
-################################################################################################################################
+###########################################################################################
 ### USER MODEL ###
-################################################################################################################################
+###########################################################################################
 
 class User(db.Model):
     """User Model"""
@@ -97,25 +97,11 @@ class User(db.Model):
             return user
         else:
             return False
-            
-    
-    # @classmethod
-    # def check_username(cls, username) -> bool:
-    #     return cls.query.filter_by(username=username.lower()).one_or_none()
-
-    # def serialize(self):
-    #     return {
-    #         "id": self.id,
-    #         "first_name": self.first_name,
-    #         "last_name": self.last_name,
-    #         "email": self.email,
-    #         "username": self.username
-    #     }
 
 
-################################################################################################################################
+###########################################################################################
 ### DAYS OF WEEK MODEL ###
-################################################################################################################################
+###########################################################################################
 
 class DaysOfWeek(db.Model):
     """DaysOfWeek Model"""
@@ -145,9 +131,9 @@ def days_query():
         return DaysOfWeek.query
 
 
-################################################################################################################################
+###########################################################################################
 ### EQUIPMENT MODEL ###
-################################################################################################################################
+###########################################################################################
     
 class Equipment(db.Model):
     """Equipment Model"""
@@ -173,9 +159,9 @@ class Equipment(db.Model):
         }
 
 
-################################################################################################################################
+###########################################################################################
 ### EXERCISE MODEL ###
-################################################################################################################################
+###########################################################################################
 
 class Exercise(db.Model):
     """Exercise Model"""
@@ -221,9 +207,9 @@ def excer_query():
         return Exercise.query
 
 
-################################################################################################################################
+###########################################################################################
 ### WORKOUT MODEL ###
-################################################################################################################################
+###########################################################################################
 
 class Workout(db.Model):
     """Workout Model"""
@@ -384,12 +370,24 @@ class Workout(db.Model):
             "user_id": self.user_id,
             "title": self.title,
             "description": self.description,
-            "day_id": self.id,
-            "equipment_id_1": self.equipment_id_1,
-            "equipment_id_2": self.equipment_id_2,
-            "equipment_id_3": self.equipment_id_3,
-            "equipment_id_4": self.equipment_id_4,
-            "equipment_id_5": self.equipment_id_5,
-            "equipment_id_6": self.equipment_id_6,
+            "day_id_1": self.days_id_1,
+            "day_id_2": self.days_id_2,
+            "day_id_3": self.days_id_3,
+            "exercise_id_1": self.exercise_id_1,
+            "exercise_id_2": self.exercise_id_2,
+            "exercise_id_3": self.exercise_id_3,
+            "exercise_id_4": self.exercise_id_4,
+            "exercise_id_5": self.exercise_id_5,
+            "exercise_id_6": self.exercise_id_6,
+            "exercise_id_7": self.exercise_id_7,
+            "exercise_id_8": self.exercise_id_8,
+            "exercise_id_9": self.exercise_id_9
         }
 
+    # @classmethod
+    # def create_workout(cls, title, description):
+
+    #     workout = cls(title=title, description=description)
+    #     submit_data(workout)
+
+    #     return workout
