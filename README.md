@@ -1,6 +1,6 @@
 # WELCOME TO WORKOUT PLANNER
 - API: https://wger.de/en/software/api
-- DEPLOYED APP: 
+- DEPLOYED APP: https://the-workout-planner.herokuapp.com
 
 ## Description:
 Workout Planner is a web application that containing hundreds of exercise routines. Users will be able to create an account, 
