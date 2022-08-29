@@ -1,6 +1,8 @@
 # WELCOME TO WORKOUT PLANNER
 - API: https://wger.de/en/software/api
 - DEPLOYED APP: https://the-workout-planner.herokuapp.com
+  - Test User: tester
+  - Test Password: passer123
 
 ## Description:
 Workout Planner is a web application that containing hundreds of exercise routines. Users will be able to create an account, 
