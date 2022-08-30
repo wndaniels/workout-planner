@@ -5,11 +5,39 @@ Home
 {% endblock %}
 
 {% block content %}
-<h1 class="anon-home">Welcome to Workout Planner</h1>
-<h2 class="anon-home">An application to help build your next workout program, and help you stay on task</h2>
-<div>
-    <a class="btn btn-primary" href="/login">Login</a>
+<div class="container text-center" id="homepage-content">
+    <i class="fa-solid fa-dumbbell" id="homepage-dumbell"></i>
+    <h1 class="anon-h1">Workout Planner</h1>
+    <!-- <h2 class="anon-h2">An application to help build your next workout program, and help you stay on task</h2> -->
+    <div>
+        <form class="login-form" method="POST">
+            {{ form.hidden_tag() }}
+
+            {% for field in form
+            if field.widget.input_type != 'hidden' %}
+            <p>
+                {{ field.label }}
+                {{ field (class_="form-control") }}
+
+                {% for error in field.errors %}
+                <span class="form-text text-danger">
+                    {{ error }}
+                </span>
+                {% endfor %}
+            </p>
+            {% endfor %}
+
+
+            <button class="btn btn-success" type="submit">Login</button>
+        </form>
+    </div>
+
+    <div>
+        <p class="lead"><em>Don't have an account? <a href="/register">Register Here</a></em>
+        </p>
+    </div>
 </div>
+
 
 
 {% endblock %}

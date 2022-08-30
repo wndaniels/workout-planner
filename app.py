@@ -67,15 +67,27 @@ def base():
     return redirect("/home")
 
 
-@app.route("/home", methods=["GET"])
+@app.route("/home", methods=["GET", "POST"])
 def home():
     """Base redirects to login page if user is not logged in"""
     if g.user:
         return redirect(f"/user/{g.user.id}")
-    
-    """ MAYBE PUT A TIMED MODAL THAT SHOWS UP FOR USER TO LOGIN """
 
-    return render_template("anon_home.html")
+    form = LoginForm()
+
+    if form.validate_on_submit():
+        user = User.authenticate(form.username.data,
+                                form.password.data)
+        if user:
+            do_login(user)
+            flash(f"Hello, {user.username}!", "success")
+            return redirect("/")
+            
+
+        flash("Email or Password are incorrect.", 'danger')
+
+
+    return render_template("anon_home.html", form=form)
 
 
 @app.route("/login", methods=["GET", "POST"])

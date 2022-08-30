@@ -6,29 +6,29 @@ Add Exercise
 
 {% block content %}
 
-<div class="row justify-content-md-center">
-    <div class="col-md-4">
-        <form class="add-exerc-form" method="POST">
-            {{ form.hidden_tag() }}
+<div class="container text-center">
+    <div class="row align-items-start">
+        <div class="col">
+            <form class="add-exerc-form" method="POST">
+                {{ form.hidden_tag() }}
 
-            {% for field in form if field.widget.input_type != 'hidden' %}
-            <p>
-                {{ field.label (id="day-exerc-lable") }}
-                {{ field (class_="form-control") }}
+                {% for field in form if field.widget.input_type != 'hidden' %}
+                <p>
+                    {{ field.label (id="day-exerc-lable") }}
+                    {{ field (class_="form-control") }}
 
-                {% for error in field.errors %}
-                <span class="form-text text-danger">
-                    {{ error }}
-                </span>
+                    {% for error in field.errors %}
+                    <span class="form-text text-danger">
+                        {{ error }}
+                    </span>
+                    {% endfor %}
+                </p>
                 {% endfor %}
-            </p>
-            {% endfor %}
 
-            <button class="btn btn-sm btn-success" type="submit">Save</button>
-            <a class="btn btn-sm btn-primary" href="/user/{{ g.user.id }}">Cancel</a>
-            <a class="btn btn-sm btn-danger" href="/workout/{{ workout.id }}/delete"><em>Delete Workout</em></a>
-        </form>
-
+                <button class="btn btn-sm btn-success" type="submit">Save</button>
+                <a class="btn btn-sm btn-primary" href="/user/{{ g.user.id }}">Cancel</a>
+            </form>
+        </div>
     </div>
 </div>
 

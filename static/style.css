@@ -1,7 +1,77 @@
-h1{
-text-decoration: underline;
+body{
+    background-color: rgb(234, 232, 232);
 }
+
+.navbar{
+    margin: 20px;
+}
+
+.navbar-brand{
+    font-size: 2rem;
+    color: rgb(56, 56, 56);
+}
+
+.navbar-brand:hover{
+    color: rgb(99, 99, 99);
+}
+
+.dropdown-menu{
+    margin-right: 100px;
+}
+
+#homepage-content{
+    width: 600px;
+}
+
+#homepage-dumbell {
+    color: rgb(56, 56, 56);
+    font-size: 5rem;
+    padding-top: 100px;
+    padding-bottom: 20px;
+}
+
+.anon-h1{
+    font-family: 'Kanit', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
+    font-style: italic;
+    text-transform: uppercase;
+    color: rgb(56, 56, 56);
+    padding-bottom: 50px;
+}
+
+.login-form{
+    background-color: white;
+    font-family: 'Kanit', sans-serif;
+    font-weight: 600;
+    text-transform: uppercase;
+    width: 275px;
+    border: 1px solid rgba(0, 0, 0, 0.442);
+    margin-left: 150px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    padding: 40px
+}
+
+.lead{
+    background-color: white;
+    font-family: 'Kanit', sans-serif;
+    font-size: .8rem;
+    font-weight: 400;
+    width: 275px;
+    border: 1px solid rgba(0, 0, 0, 0.442);
+    margin-left: 150px;
+    border-radius: 5px;
+    padding: 20px
+}
+
 
 #day-exerc-lable{
     font-weight: 800;
+    
+}
+
+#login-content{
+    width: 600px;
+    margin-top: 300px;
 }
