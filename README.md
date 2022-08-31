@@ -1,3 +1,5 @@
+![alt text](img/headerimg.png)
+
 # WELCOME TO WORKOUT PLANNER
 - API: https://wger.de/en/software/api
 - DEPLOYED APP: https://the-workout-planner.herokuapp.com
