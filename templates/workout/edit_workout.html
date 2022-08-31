@@ -24,9 +24,9 @@ Edit Workout
             </p>
             {% endfor %}
 
-            <button class="btn btn-sm btn-success" type="submit">Save</button>
-            <a class="btn btn-sm btn-primary" href="/user/{{ g.user.id }}">Cancel</a>
-            <a class="btn btn-sm btn-danger" href="/workout/{{ workout.id }}/delete"><em>Delete Workout</em></a>
+            <button class="btn btn-sm" id="save-btn" type="submit">Save</button>
+            <a class="btn btn-sm" id="cancel-btn" href="/user/{{ g.user.id }}">Cancel</a>
+            <a class="btn btn-sm" id="delete-btn" href="/workout/{{ workout.id }}/delete">Delete Workout</a>
         </form>
 
     </div>

@@ -1,5 +1,7 @@
 body{
+    font-family: 'Kanit', sans-serif;
     background-color: rgb(234, 232, 232);
+    margin: 50px;
 }
 
 .navbar{
@@ -15,8 +17,15 @@ body{
     color: rgb(99, 99, 99);
 }
 
-.dropdown-menu{
-    margin-right: 100px;
+.nav-link{
+    font-weight: 200;
+    font-size: 1rem;
+    color: rgb(56, 56, 56);
+}
+
+.nav-link:hover{
+    text-decoration: underline;
+    color: rgb(99, 99, 99);
 }
 
 #homepage-content{
@@ -31,7 +40,6 @@ body{
 }
 
 .anon-h1{
-    font-family: 'Kanit', sans-serif;
     font-size: 3.5rem;
     font-weight: 800;
     font-style: italic;
@@ -40,11 +48,30 @@ body{
     padding-bottom: 50px;
 }
 
+#register-content{
+    width: 600px;
+}
+
+.register-form{
+    background-color: white;
+    border: 1px solid rgba(0, 0, 0, 0.442);
+    border-radius: 5px;
+    margin-bottom: 10px;
+    padding: 40px
+}
+
+.register-lead{
+    background-color: white;
+    font-size: 1rem;
+    font-weight: 300;
+    width: 600px;
+    border: 1px solid rgba(0, 0, 0, 0.442);
+    border-radius: 5px;
+    padding: 20px
+}
+
 .login-form{
     background-color: white;
-    font-family: 'Kanit', sans-serif;
-    font-weight: 600;
-    text-transform: uppercase;
     width: 275px;
     border: 1px solid rgba(0, 0, 0, 0.442);
     margin-left: 150px;
@@ -53,11 +80,26 @@ body{
     padding: 40px
 }
 
-.lead{
+.form-label{
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.form-control{
+    font-weight: 200;
+    font-size: .9rem;
+}
+
+#login-submit{
+    font-weight: 600;
+    font-size: .7rem;
+    text-transform: uppercase;
+}
+
+.login-lead{
     background-color: white;
-    font-family: 'Kanit', sans-serif;
     font-size: .8rem;
-    font-weight: 400;
+    font-weight: 300;
     width: 275px;
     border: 1px solid rgba(0, 0, 0, 0.442);
     margin-left: 150px;
@@ -65,13 +107,123 @@ body{
     padding: 20px
 }
 
-
-#day-exerc-lable{
-    font-weight: 800;
-    
+#create-workout-content{
+    width: 600px;
 }
+
+.create-workout-form{
+    background-color: white;
+    border: 1px solid rgba(0, 0, 0, 0.442);
+    border-radius: 5px;
+    margin-bottom: 10px;
+    padding: 40px
+}
+
+.card{
+    padding: 50px;
+    width: 600px;
+}
+
+.card-title{
+    font-size: 2rem;
+    font-weight: 400;
+    text-transform: capitalize;
+    margin-bottom: 0px;
+}
+
+.card-text{
+    font-weight: 200;
+    font-style: italic;
+    margin-bottom: 5px;
+}
+
+.workout-btns{
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+#workout-edit{
+    font-size: .7rem;
+    color: whitesmoke;
+    background-color: rgb(56, 56, 56) ;
+}
+
+#workout-exerc{
+    font-size: .7rem;
+    border: 1px solid rgba(0, 0, 0, 0.442);
+    background-color: whitesmoke;
+}
+
+.workout-data{
+    font-weight: 200;
+    }
+
+
+#add-exerc{
+    width: 600px;
+}
+
+#form-label{
+    font-weight: 800;
+    text-transform: capitalize;
+}
+
+.register-form{
+    width: 600px;
+}
+
 
 #login-content{
     width: 600px;
     margin-top: 300px;
+}
+
+.required-input{
+    font-size: .8rem;
+    font-style: italic;
+}
+
+.edit-user-form{
+    background-color: white;
+    width: 600px;
+    border: 1px solid rgba(0, 0, 0, 0.442);
+    border-radius: 5px;
+    padding: 40px
+}
+
+
+#save-btn{
+    font-size: .7rem;
+    color: whitesmoke;
+    background-color: rgb(56, 56, 56);
+    text-transform: uppercase;
+    
+}
+
+#cancel-btn{
+    font-size: .7rem;
+    border: 1px solid rgba(0, 0, 0, 0.442);
+    background-color: whitesmoke;
+    text-transform: uppercase;
+}
+
+#delete-btn{
+    font-size: .7rem;
+    font-style: italic;
+    text-transform: uppercase;
+}
+
+#delete-btn:hover{
+    font-size: .7rem;
+    font-style: italic;
+    text-transform: uppercase;
+    text-decoration: line-through;
+}
+
+#back-btn{
+    font-size: .7rem;
+    text-transform: uppercase;
+    color: whitesmoke;
+    background-color: rgb(56, 56, 56) ;
+    margin-bottom: 20px;
 }

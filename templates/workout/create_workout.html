@@ -6,7 +6,7 @@ Create Workout
 
 {% block content %}
 
-<div>
+<div class="container" id="create-workout-content">
     <form class="create-workout-form" method="POST">
         {{ form.hidden_tag() }}
 
@@ -24,7 +24,8 @@ Create Workout
         </p>
         {% endfor %}
 
-        <button class="btn btn-success" type="submit">Create Workout</button>
+        <button class="btn btn-sm" id="save-btn" type="submit">Create Workout</button>
+        <a class="btn btn-sm" id="cancel-btn" href="/user/{{ g.user.id }}">Cancel</a>
     </form>
 </div>
 

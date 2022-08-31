@@ -16,7 +16,7 @@ Home
             {% for field in form
             if field.widget.input_type != 'hidden' %}
             <p>
-                {{ field.label }}
+                {{ field.label (class_="form-label") }}
                 {{ field (class_="form-control") }}
 
                 {% for error in field.errors %}
@@ -28,12 +28,12 @@ Home
             {% endfor %}
 
 
-            <button class="btn btn-success" type="submit">Login</button>
+            <button class="btn btn-sm" id="save-btn" type="submit">Login</button>
         </form>
     </div>
 
     <div>
-        <p class="lead"><em>Don't have an account? <a href="/register">Register Here</a></em>
+        <p class="login-lead"><em>Don't have an account? <a href="/register">Register Here</a></em>
         </p>
     </div>
 </div>

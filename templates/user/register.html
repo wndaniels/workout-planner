@@ -6,30 +6,34 @@ Register
 
 {% block content %}
 
-<p class="lead"> Register with the details below!<br><em>Have an account? <a href="/login">Login Here!</a></em></p>
+<div class="row justify-content-md-center" id="register-content">
+    <div class="col-md-4">
+        <form class="register-form" method="POST">
+            {{ form.hidden_tag() }}
 
-<form class="register-form" method="POST">
-    {{ form.hidden_tag() }}
+            {% for field in form
+            if field.widget.input_type != 'hidden' %}
+            <p>
+                {{ field.label (class_="form-label")}}
+                {{ field (class_="form-control") }}
 
-    {% for field in form
-    if field.widget.input_type != 'hidden' %}
-    <p>
-        {{ field.label }}
-        {{ field (class_="form-control") }}
+                {% for error in field.errors %}
+                <span class="form-text text-danger">
+                    {{ error }}
+                </span>
+                {% endfor %}
+            </p>
+            {% endfor %}
 
-        {% for error in field.errors %}
-        <span class="form-text text-danger">
-            {{ error }}
-        </span>
-        {% endfor %}
-    </p>
-    {% endfor %}
+            <p class="required-input">* Input Required</p>
 
-    <button class="btn btn-success" id="reg-submit" type="submit">Register User</button>
-</form>
-<br>
-<p><em>* Input Required</em></p>
-
-<!-- MODAL?? -->
+            <button class="btn btn-sm" id="save-btn" type="submit">Register User</button>
+            <a class="btn btn-sm" id="cancel-btn" href="/">Cancel</a>
+        </form>
+        <p class="register-lead"> Register with the details below!<br><em>Have an account? <a href="/login">Login
+                    Here!</a></em>
+        </p>
+    </div>
+</div>
 
 {% endblock %}

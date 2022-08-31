@@ -6,7 +6,7 @@ Add Exercise
 
 {% block content %}
 
-<div class="container text-center">
+<div class="container text-center" id="add-exerc">
     <div class="row align-items-start">
         <div class="col">
             <form class="add-exerc-form" method="POST">
@@ -14,7 +14,7 @@ Add Exercise
 
                 {% for field in form if field.widget.input_type != 'hidden' %}
                 <p>
-                    {{ field.label (id="day-exerc-lable") }}
+                    {{ field.label (id="form-label") }}
                     {{ field (class_="form-control") }}
 
                     {% for error in field.errors %}
@@ -25,8 +25,8 @@ Add Exercise
                 </p>
                 {% endfor %}
 
-                <button class="btn btn-sm btn-success" type="submit">Save</button>
-                <a class="btn btn-sm btn-primary" href="/user/{{ g.user.id }}">Cancel</a>
+                <button class="btn btn-sm" id="save-btn" type="submit">Save</button>
+                <a class="btn btn-sm" id="cancel-btn" href="/user/{{ g.user.id }}">Cancel</a>
             </form>
         </div>
     </div>

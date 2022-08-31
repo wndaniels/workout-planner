@@ -80,7 +80,6 @@ def home():
                                 form.password.data)
         if user:
             do_login(user)
-            flash(f"Hello, {user.username}!", "success")
             return redirect("/")
             
 
@@ -105,7 +104,6 @@ def login():
                                 form.password.data)
         if user:
             do_login(user)
-            flash(f"Hello, {user.username}!", "success")
             return redirect("/")
             
 

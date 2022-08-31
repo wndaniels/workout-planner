@@ -5,12 +5,13 @@
 {% endblock %}
 
 {% block content %}
-<button class="btn btn-sm btn-secondary" onclick="history.back()">Go Back</button>
+
 
 <div class="row justify-content-md-center">
     <div class="col-md-4">
         <div class="card">
             <div class="card-body">
+                <button class="btn btn-sm" id="back-btn" onclick="history.back()">Go Back</button>
                 <div>
                     <h4 class="card-title">
                         {{ exerc.name }}

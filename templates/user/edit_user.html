@@ -15,7 +15,7 @@ Edit User
 
                 {% for field in form if field.widget.input_type != 'hidden' %}
                 <p>
-                    {{ field.label }}
+                    {{ field.label (class_="form-label")}}
                     {{ field (class_="form-control") }}
 
                     {% for error in field.errors %}
@@ -25,24 +25,17 @@ Edit User
                     {% endfor %}
                 </p>
                 {% endfor %}
-                <div>
-                    <button class="btn btn-sm btn-success" type="submit">Save</button>
-                </div>
-                <div>
-                    <a class="btn btn-sm btn-primary" href="/user/{{ g.user.id }}">Cancel</a>
-                </div>
-            </form>
-            <div>
+                <p class="required-input">* Input Required</p>
+
+                <button class="btn btn-sm" id="save-btn" type="submit">Save</button>
+
+                <a class="btn btn-sm" id="cancel-btn" href="/user/{{ g.user.id }}">Cancel</a>
                 {% if g.user.id == user.id %}
                 <form class="delete-user-form" method="POST" action="/user/{{ g.user.id }}/delete">
-                    <button class="btn btn-sm btn-outline-danger"><em>Delete Profile</em></button>
+                    <button class="btn btn-sm" id="delete-btn">Delete Profile</button>
                 </form>
                 {% endif %}
-            </div>
-        </div>
-        <br>
-        <div>
-            <p><em>* Input Required</em></p>
+            </form>
         </div>
     </div>
 </div>

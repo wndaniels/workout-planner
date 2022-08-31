@@ -9,29 +9,29 @@ Workout Planner
 {% for workout in workout %}
 {% if g.user == workout.user %}
 <div class="row justify-content-md-center" id="workout">
-    <div class="col-md-4">
+    <div class="col-sm-6">
         <div class="card">
             <div class="card-body">
                 <div>
-                    <h2 class="card-title">
+                    <h1 class="card-title">
                         {{ workout.title }}
-                        <a class="btn btn-sm btn-primary" href="/workout/{{ workout.id }}/edit">
+                    </h1>
+
+                    <p class="card-text">
+                        {{ workout.description }}
+                    </p>
+
+                    <p class="workout-btns">
+                        <a class="btn btn-sm" id="workout-edit" href="/workout/{{ workout.id }}/edit">
                             Edit
                         </a>
-                        <a class="btn btn-sm btn-danger" href="/workout/{{ workout.id }}/add-exercise">
+                        <a class="btn btn-sm" id="workout-exerc" href="/workout/{{ workout.id }}/add-exercise">
                             Add/Edit Exercise List
                         </a>
-                    </h2>
-                </div>
-                <div>
-                    <p class="card-text">
-                    <p><em>{{ workout.description }}</em></p>
                     </p>
                 </div>
                 <hr>
-                <div>
-
-
+                <div class="workout-data">
                     {% if workout.exercise_id_1 or workout.exercise_id_2 or workout.exercise_id_3 or
                     workout.exercise_id_4 or workout.exercise_id_5 or workout.exercise_id_6 or workout.exercise_id_7 or
                     workout.exercise_id_8 or workout.exercise_id_9 %}
