@@ -27,6 +27,8 @@ The current version of the application is proof of concept and has the ability t
 
 ## Tech Stack
 ### Languages:
+- CSS
+- HTML5
 - Flask
 - Python
 - PostgreSQL
