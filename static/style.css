@@ -90,12 +90,6 @@ body{
     font-size: .9rem;
 }
 
-#login-submit{
-    font-weight: 600;
-    font-size: .7rem;
-    text-transform: uppercase;
-}
-
 .login-lead{
     background-color: white;
     font-size: .8rem;
@@ -156,15 +150,27 @@ body{
 
 .workout-data{
     font-weight: 200;
-    }
+}
+
+.edit-workout-form{
+    background-color: white;
+    border-radius: 5px;
+    padding: 40px
+}
 
 
 #add-exerc{
     width: 600px;
 }
 
+.add-exerc-form{
+    background-color: white;
+    border-radius: 5px;
+    padding: 40px
+}
+
 #form-label{
-    font-weight: 800;
+    font-weight: 600;
     text-transform: capitalize;
 }
 
